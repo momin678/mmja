@@ -1,0 +1,38 @@
+<?php
+
+use Facade\Ignition\Tabs\Tab;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateCostCentersTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('cost_centers', function (Blueprint $table) {
+            $table->id();
+            $table->string('cc_code')->unique();
+            $table->string('cc_name');
+            $table->string('activity');
+            $table->string('prsn_responsible');
+            $table->string('project_id');
+            $table->softDeletes();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('cost_centers');
+    }
+}

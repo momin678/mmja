@@ -1,0 +1,46 @@
+=== Personal Details
+Father's Name: (Text Box):
+Date of Birth (Calender):
+Nationality (Combo Box)
+Emirates ID Number (Text Box):
+Emirates ID Expiry (Text Box)
+Emirates ID Upload
+First Language (Combo Box):
+Second Language (Combo Box):
+Preferred mode of communication (Check Box):
+
+=== Passport & Visa Details 
+Passport Number (Text Box):
+Passport Issuing Country (Combo Box)
+VISA number (Editable Text Field )
+Combo: Residence / Non Residence 
+Combo: VISA Issue Place 
+Visa Expiry Date: Date Field (Calender)
+
+
+
+=== Education & Profession: 
+Qualification (Combo Box) : 
+Year of Passing (Editable Text box ): 
+Institution (Editable Text Box): 
+Qualification Conutry (Combo Box):
+
+Occupation (Combo Box):
+Company Name (Text Box): 
+Company Contact Detail (Text Box): 
+Monthly Income / Salary (Text Box):
+
+ 
+
+=== Address Details
+Local Address (Text Box):
+P. B. Number 
+Row 1 ( Editable Text Box) 
+Row 2 ( Editable Text Box) 
+Row 3 ( Editable Text Box) 
+Emirate (Combo Box)
+
+Local telephone Number (Text Box):
+Permanent Address (Text Box): 
+Permanent telephone Number (Text Box):
+
