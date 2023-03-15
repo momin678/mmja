@@ -237,74 +237,74 @@
                 {{-- Receivables --}}
                 <li class=" nav-item"><a href="#"><i class="bx bx-user-plus"></i><span class="menu-title text-truncate" data-i18n="Purchase">Receivables</span></a>
                     <ul class="menu-content">
-                        <li class="{{ Request::is('purchase-requisition*') ? 'active' : ''}}">
+                        <li class="{{ Request::is('customer-balance*') ? 'active' : ''}}">
                             <a class="d-flex align-items-center" href="{{route('customer-balance')}}">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="Purchase Requisition">Customer Balances                                </span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('item-purchase*') || Request::is("po-generation-approval-list") || Request::is("po-generation-approval-details") ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('item-purchase.index')}}">
+                        <li class="{{ Request::is('ar-ageing-summary') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('ar-ageing-summary')}}">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">AR Ageing Summary</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('item-purchase*') || Request::is("po-generation-approval-list") || Request::is("po-generation-approval-details") ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('item-purchase.index')}}">
+                        <li class="{{ Request::is('ar-ageing-details') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('ar-ageing-details')}}">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">AR Ageing Details</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('item-purchase*') || Request::is("po-generation-approval-list") || Request::is("po-generation-approval-details") ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('item-purchase.index')}}">
+                        <li class="{{ Request::is('tax-invoice-detail*') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('tax-invoice-detail')}}">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Invoice Details</span>
                             </a>
                         </li>
                         <li class="{{ Request::is('item-purchase*') || Request::is("po-generation-approval-list") || Request::is("po-generation-approval-details") ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('item-purchase.index')}}">
+                            <a class="d-flex align-items-center" href="#">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Retainer invoice details</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('item-purchase*') || Request::is("po-generation-approval-list") || Request::is("po-generation-approval-details") ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('item-purchase.index')}}">
+                        <li class="{{ Request::is('customer-order*') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('customer-order')}}">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Sales order details</span>
                             </a>
                         </li>
                         <li class="{{ Request::is('item-purchase*') || Request::is("po-generation-approval-list") || Request::is("po-generation-approval-details") ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('item-purchase.index')}}">
+                            <a class="d-flex align-items-center" href="#">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Delivery Challan Details</span>
                             </a>
                         </li>
                         <li class="{{ Request::is('item-purchase*') || Request::is("po-generation-approval-list") || Request::is("po-generation-approval-details") ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('item-purchase.index')}}">
+                            <a class="d-flex align-items-center" href="#">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Estimate Details</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('item-purchase*') || Request::is("po-generation-approval-list") || Request::is("po-generation-approval-details") ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('item-purchase.index')}}">
+                        <li class="{{ Request::is('customer-balance-summary*') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('customer-balance-summary')}}">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Customer balance summary</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('item-purchase*') || Request::is("po-generation-approval-list") || Request::is("po-generation-approval-details") ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('item-purchase.index')}}">
+                        <li class="{{ Request::is('receivable-summary') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('receivable-summary')}}">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Receivable summary</span>
                             </a>
                         </li>
                         <li class="{{ Request::is('item-purchase*') || Request::is("po-generation-approval-list") || Request::is("po-generation-approval-details") ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('item-purchase.index')}}">
+                            <a class="d-flex align-items-center" href="#">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Receivables Details</span>
                             </a>
                         </li>
                         <li class="{{ Request::is('item-purchase*') || Request::is("po-generation-approval-list") || Request::is("po-generation-approval-details") ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('item-purchase.index')}}">
+                            <a class="d-flex align-items-center" href="#">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Sales Return Details</span>
                             </a>

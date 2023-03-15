@@ -7,17 +7,23 @@ $company_email= \App\Setting::where('config_name', 'company_email')->first();
 @endphp
 @push('css')
 <style>
-    .custom-border{
-        border: 1px solid #000 !important;
+    td{
+        text-align: center !important;
     }
-    .table {
-        width: 100%;
-        margin-bottom: 1rem;
-        color: #000;
-    }
-    p{
-        color: black !important;
-    }
+
+    th, td {
+    border: 1px solid #000 !important;
+}
+
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #000;
+}
+p{
+    color: black !important;
+}
+
 </style>
 @endpush
 @section('content')
@@ -120,125 +126,125 @@ $company_email= \App\Setting::where('config_name', 'company_email')->first();
                     <div class="row pt-2">
                         <table   class="table table-sm ">
                             <tr>
-                                <th class="text-center custom-border" colspan="8">Particular Description</th>
-                                <th class="text-center custom-border" rowspan="2" >Rate</th>
-                                <th class="text-center custom-border" rowspan="2">Quantity</th>
-                                <th class="text-center custom-border" rowspan="2">Amount</th>
+                                <th class="text-center" colspan="8">Particular Description</th>
+                                <th class="text-center"  rowspan="2" >Rate</th>
+                                <th class="text-center"   rowspan="2">Quantity</th>
+                                <th class="text-center" rowspan="2">Amount</th>
                             </tr>
                           @foreach (App\InvoiceItem::where('invoice_id',$invoice->id)->where('size','>',10)->where('size','<',18)->select('style_id')->distinct()
                           ->get() as $it)
                           <tr>
-                            <th class="text-center custom-border" colspan="8">{{ App\Style::where('id',$it->style_id )->first()->style_name }}</th>
+                            <th class="text-center" colspan="8">{{ App\Style::where('id',$it->style_id )->first()->style_name }}</th>
                           </tr>
                           <tr>
-                            <td class="custom-border">COLOR</td>
+                            <td>COLOR</td>
                             @foreach (App\Group::where('group_no','>', 10)->where('group_no','<', 18)->get() as $clr)
-                            <th class="text-center custom-border">{{ $clr->group_name }}</th>
+                            <th class="text-center">{{ $clr->group_name }}</th>
 
                             @endforeach
-                            <th colspan="3" class="custom-border"></th>
+                            <th colspan="3"></th>
 
                           </tr>
                           @foreach (App\InvoiceItem::where('invoice_id',$invoice->id)->where('style_id',$it->style_id)->select('color_id','style_id','invoice_id','vat_rate')->distinct()
                           ->get() as $color)
                         <tr>
-                            <td class="custom-border">{{ App\Brand::where('id',$color->color_id)->first()->name }}</td>
-                            <td class="custom-border">{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','11')->sum('quantity') }}</td>
-                            <td class="custom-border">{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','12')->sum('quantity') }}</td>
-                            <td class="custom-border">{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','13')->sum('quantity') }}</td>
-                            <td class="custom-border">{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','14')->sum('quantity') }}</td>
-                            <td class="custom-border">{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','15')->sum('quantity') }}</td>
-                            <td class="custom-border">{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','16')->sum('quantity') }}</td>
-                            <td class="custom-border">{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','17')->sum('quantity') }}</td>
+                            <td>{{ App\Brand::where('id',$color->color_id)->first()->name }}</td>
+                            <td>{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','11')->sum('quantity') }}</td>
+                            <td>{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','12')->sum('quantity') }}</td>
+                            <td>{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','13')->sum('quantity') }}</td>
+                            <td>{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','14')->sum('quantity') }}</td>
+                            <td>{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','15')->sum('quantity') }}</td>
+                            <td>{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','16')->sum('quantity') }}</td>
+                            <td>{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','17')->sum('quantity') }}</td>
                             @php
                                 $colorItems=App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->first();
                                 $costPrice= $colorItems->cost_price/$colorItems->quantity;
                             @endphp
-                            <td class="custom-border">{{ number_format((float)($costPrice), 3,'.','') }}</td>
-                            <td class="custom-border">{{$quantity= App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->sum('quantity') }}</td>
-                           <td class="custom-border">{{ number_format((float)( $costPrice*$quantity), 2,'.','')  }}</td>
+                            <td>{{ number_format((float)($costPrice), 3,'.','') }}</td>
+                            <td >{{$quantity= App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->sum('quantity') }}</td>
+                           <td >{{ number_format((float)( $costPrice*$quantity), 2,'.','')  }}</td>
                         </tr>
                         @endforeach
                         <tr>
-                            <th class="text-center custom-border" style="border: none !important" colspan="8"></th>
-                            <th class="text-center custom-border"  colspan="1">Item Subtotal <small>Pcs</small></th>
-                            <th class="text-center custom-border" colspan="1"  >{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$it->style_id)->sum('quantity') }}</th>
-                            <th colspan="1" class="custom-border"></th>
+                            <th class="text-center" style="border: none !important" colspan="8"></th>
+                            <th class="text-center"  colspan="1">Item Subtotal <small>Pcs</small></th>
+                            <th class="text-center" colspan="1"  >{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$it->style_id)->sum('quantity') }}</th>
+                            <th colspan="1"></th>
                         </tr>
                           @endforeach
 
                           @foreach (App\InvoiceItem::where('invoice_id',$invoice->id)->where('size','>',17)->where('size','<',24)->select('style_id')->distinct()
                           ->get() as $it)
                           <tr>
-                            <th class="text-center custom-border" colspan="8">{{ App\Style::where('id',$it->style_id )->first()->style_name }}</th>
+                            <th class="text-center" colspan="8">{{ App\Style::where('id',$it->style_id )->first()->style_name }}</th>
                           </tr>
                           <tr>
-                            <td class="custom-border">COLOR</td>
+                            <td>COLOR</td>
                             @foreach (App\Group::where('group_no','>', 17)->where('group_no','<', 24)->get() as $clr)
-                            <th class="text-center custom-border">{{ $clr->group_name }}</th>
+                            <th class="text-center">{{ $clr->group_name }}</th>
 
                             @endforeach
                           </tr>
                           @foreach (App\InvoiceItem::where('invoice_id',$invoice->id)->where('style_id',$it->style_id)->select('color_id','style_id','invoice_id','vat_rate')->distinct()
                           ->get() as $color)
                         <tr>
-                            <td class="custom-border">{{ App\Brand::where('id',$color->color_id)->first()->name }}</td>
-                            <td class="custom-border">{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','18')->sum('quantity') }}</td>
-                            <td class="custom-border">{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','19')->sum('quantity') }}</td>
-                            <td class="custom-border">{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','20')->sum('quantity') }}</td>
-                            <td class="custom-border">{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','21')->sum('quantity') }}</td>
-                            <td class="custom-border">{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','22')->sum('quantity') }}</td>
-                            <td class="custom-border">{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','23')->sum('quantity') }}</td>
-                            <td class="custom-border"></td>
+                            <td>{{ App\Brand::where('id',$color->color_id)->first()->name }}</td>
+                            <td>{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','18')->sum('quantity') }}</td>
+                            <td>{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','19')->sum('quantity') }}</td>
+                            <td>{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','20')->sum('quantity') }}</td>
+                            <td>{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','21')->sum('quantity') }}</td>
+                            <td>{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','22')->sum('quantity') }}</td>
+                            <td>{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->where('size','23')->sum('quantity') }}</td>
+                            <td></td>
                             @php
                                 $colorItems=App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->first();
                                 $costPrice= $colorItems->cost_price/$colorItems->quantity;
                             @endphp
-                            <td class="custom-border">{{ number_format((float)($costPrice), 3,'.','') }}</td>
-                            <td class="custom-border">{{$quantity= App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->sum('quantity') }}</td>
-                            <td class="custom-border">{{ number_format((float)( $costPrice*$quantity), 2,'.','')  }}</td>
+                            <td>{{ number_format((float)($costPrice), 3,'.','') }}</td>
+                            <td >{{$quantity= App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$color->style_id)->where('color_id',$color->color_id)->sum('quantity') }}</td>
+                           <td >{{ number_format((float)( $costPrice*$quantity), 2,'.','')  }}</td>
                         </tr>
                         @endforeach
                         <tr>
-                            <th class="text-center custom-border" style="border: none !important" colspan="8"></th>
-                            <th class="text-center custom-border"  colspan="1">Item Subtotal<small>Pcs</small></th>
-                            <th class="text-center custom-border" colspan="1"  >{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$it->style_id)->sum('quantity') }}</th>
-                            <th colspan="1" class="custom-border"></th>
+                            <th class="text-center" style="border: none !important" colspan="8"></th>
+                            <th class="text-center"  colspan="1">Item Subtotal<small>Pcs</small></th>
+                            <th class="text-center" colspan="1"  >{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->where('style_id',$it->style_id)->sum('quantity') }}</th>
+                            <th colspan="1"></th>
                         </tr>
                           @endforeach
 
 
                           <tr>
-                            <th class="text-center custom-border" style="border: none !important" colspan="9"></th>
-                            <th class="text-center custom-border"  colspan="1">Total <small>Pcs</small></th>
-                            <th class="text-center custom-border" colspan="1"  >{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->sum('quantity') }}</th>
+                            <th class="text-center" style="border: none !important" colspan="9"></th>
+                            <th class="text-center"  colspan="1">Total <small>Pcs</small></th>
+                            <th class="text-center" colspan="1"  >{{ App\InvoiceItem::where('invoice_id',$color->invoice_id)->sum('quantity') }}</th>
                         </tr>
                         <tr>
-                            <th class="text-center custom-border" style="border: none !important" colspan="9"></th>
-                            <th class="text-center custom-border" colspan="1"  >TAXABLE SUPPLIES <small>(AED)</small></th>
-                            <th class="text-center custom-border" colspan="1"  >{{number_format((float)( App\InvoiceItem::where('invoice_id',$color->invoice_id)->sum('total_unit_price')), 2,'.','') }}</th>
+                            <th class="text-center" style="border: none !important" colspan="9"></th>
+                            <th class="text-center" colspan="1"  >TAXABLE SUPPLIES <small>(AED)</small></th>
+                            <th class="text-center" colspan="1"  >{{number_format((float)( App\InvoiceItem::where('invoice_id',$color->invoice_id)->sum('total_unit_price')), 2,'.','') }}</th>
                         </tr>
                         <tr>
-                            <th class="text-center custom-border" style="border: none !important" colspan="9"></th>
-                            <th class="text-center custom-border" colspan="1"  >VAT <small>(5%)</small></th>
-                            <th class="text-center custom-border" colspan="1"  > {{ number_format((float)(App\InvoiceItem::where('invoice_id',$color->invoice_id)->sum('vat_amount')), 2,'.','') }}</th>
-                        </tr>
-
-                        <tr>
-                            <th class="text-center custom-border" style="border: none !important" colspan="9"></th>
-                            <th class="text-center custom-border" colspan="1"  >Total Amount <small>(AED)</small></th>
-                            <th class="text-center custom-border" colspan="1"  > {{ number_format((float)(App\InvoiceItem::where('invoice_id',$color->invoice_id)->sum('cost_price')), 2,'.','')  }}</th>
+                            <th class="text-center" style="border: none !important" colspan="9"></th>
+                            <th class="text-center" colspan="1"  >VAT <small>(5%)</small></th>
+                            <th class="text-center" colspan="1"  > {{ number_format((float)(App\InvoiceItem::where('invoice_id',$color->invoice_id)->sum('vat_amount')), 2,'.','') }}</th>
                         </tr>
 
                         <tr>
-                            <th class="text-center custom-border" style="border: none !important" colspan="9"></th>
-                            <th class="text-center custom-border" colspan="1"  >Amount from Customer<small> (AED)</small></th>
-                            <th class="text-center custom-border" colspan="2"  > {{$invoice->invoiceAmount ? number_format((float)($invoice->invoiceAmount->amount_from), 2,'.',''): '0.00'   }}</th>
+                            <th class="text-center" style="border: none !important" colspan="9"></th>
+                            <th class="text-center" colspan="1"  >Total Amount <small>(AED)</small></th>
+                            <th class="text-center" colspan="1"  > {{ number_format((float)(App\InvoiceItem::where('invoice_id',$color->invoice_id)->sum('cost_price')), 2,'.','')  }}</th>
+                        </tr>
+
+                        <tr>
+                            <th class="text-center" style="border: none !important" colspan="9"></th>
+                            <th class="text-center" colspan="1"  >Amount from Customer<small> (AED)</small></th>
+                            <th class="text-center" colspan="2"  > {{$invoice->invoiceAmount ? number_format((float)($invoice->invoiceAmount->amount_from), 2,'.',''): '0.00'   }}</th>
                         </tr>
                         <tr>
-                            <th class="text-center custom-border" style="border: none !important" colspan="9"></th>
-                            <th class="text-center custom-border" colspan="1"  >Amount to Customer <small>(AED)</small></th>
-                            <th class="text-center custom-border" colspan="2"  >{{   $invoice->invoiceAmount ? ($invoice->invoiceAmount->amount_to>0?  number_format((float)($invoice->invoiceAmount->amount_to), 2,'.',''): '0.00'): '0.00'   }}</th>
+                            <th class="text-center" style="border: none !important" colspan="9"></th>
+                            <th class="text-center" colspan="1"  >Amount to Customer <small>(AED)</small></th>
+                            <th class="text-center" colspan="2"  >{{   $invoice->invoiceAmount ? ($invoice->invoiceAmount->amount_to>0?  number_format((float)($invoice->invoiceAmount->amount_to), 2,'.',''): '0.00'): '0.00'   }}</th>
                         </tr>
 
                         </table>

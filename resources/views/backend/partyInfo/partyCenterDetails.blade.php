@@ -43,7 +43,7 @@
 
                                         <div class="col-md-2 changeColStyle">
                                             <label>Party Type</label>
-                                            <select name="pi_type" class="common-select2" style="width: 100% !important" id="pi_type" required>
+                                            <select name="pi_type" class="common-select2" style="width: 100% !important" id="" required>
                                                 <option value="">Select...</option>
                                                     @foreach ($costTypes as $item)
                                                 <option value="{{ $item->title }}" {{ isset($costCenter) ? ($costCenter->pi_type == $item->title ? 'selected' : '') : '' }}> {{ $item->title }}</option>
@@ -66,7 +66,7 @@
                                             <label>Address</label>
                                             <input type="text" id="address" class="form-control inputFieldHeight" name="address" value="{{ isset($costCenter) ? $costCenter->address : '' }}" placeholder="Address">
                                                 @error('address')
-                                                <div class="btn btn-sm btn-danger">{{ $message }}</div>
+                                            <div class="btn btn-sm btn-danger">{{ $message }}</div>
                                                 @enderror
                                         </div>
                                     
@@ -101,10 +101,7 @@
                                             <div class="btn btn-sm btn-danger">{{ $message }}</div>
                                                 @enderror
                                         </div>
-                                        <div class="col-md-3 changeColStyle" id="credit_limit" style="display: none;">
-                                            <label>Credit Limit</label>
-                                            <input type="number" class="form-control inputFieldHeight" id="input_credit_limit" name="credit_limit" value="{{ isset($costCenter) ? $costCenter->credit_limit : '' }}" placeholder="Customer credit Limit">
-                                        </div>
+                                    
                                             <div class="col-12 d-flex justify-content-end changeColStyle">
                                                 {{-- <button type="button" class="btn mr-1 formButton mAddNewIcon" title="Add New">
                                                     <div class="d-flex">
@@ -273,30 +270,6 @@
             // document.getElementById("mPrintHidden").style.display = "block";
             window.print();
         }
-    </script>
-    <script>
-        let pi_type = document.getElementById("pi_type");
-        let credit_limit = document.getElementById("credit_limit");
-        let input_credit_limit = document.getElementById("input_credit_limit");
-        $("#pi_type").change(function (e) { 
-            e.preventDefault();
-            console.log(this.value);
-            if(this.value == "Customer"){
-                if (credit_limit.style.display === "none") {
-                    credit_limit.style.display = "block";
-                    input_credit_limit.setAttribute("required", "");
-                    input_credit_limit.value = "";
-                } else {
-                    credit_limit.style.display = "none";
-                    input_credit_limit.removeAttribute("required");
-                    input_credit_limit.value = "";
-                }
-            }else{
-                credit_limit.style.display = "none";
-                input_credit_limit.removeAttribute("required");
-                input_credit_limit.value = "";
-            }
-        })
     </script>
 @endpush
 <style>

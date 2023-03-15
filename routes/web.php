@@ -563,5 +563,18 @@ Route::get('customer-balance', 'backend\AccountsReportController@customer_balanc
 Route::POST('customer-invoice-report', 'backend\AccountsReportController@customer_invoice_report')->name('customer-invoice-report');
 Route::POST('invoice-view-modal', 'backend\AccountsReportController@invoice_view_modal')->name('invoice-view-modal');
 
+Route::get('ar-ageing-summary', 'backend\AccountsReportController@ar_ageing_summary')->name('ar-ageing-summary');
+Route::get('ar-ageing-summary/{id}', 'backend\AccountsReportController@ar_ageing_summary_one')->name('ar-ageing-summary-one');
+Route::get('ar-ageing-details', 'backend\AccountsReportController@ar_ageing_details')->name('ar-ageing-details');
+
+Route::get('receivable-summary', 'backend\AccountsReportController@receivable_summary')->name('receivable-summary');
+Route::get('receivable-details/{id}', 'backend\AccountsReportController@receivable_details')->name('receivable-details');
+
+
+// Mominul Accounts Report
+Route::get('tax-invoice-detail', 'backend\AccountsReportController@tax_invoice_detail')->name('tax-invoice-detail');
+Route::get('customer-order', 'backend\AccountsReportController@customer_order')->name('customer-order');
+Route::get('customer-balance-summary', 'backend\AccountsReportController@customer_balance_summary')->name('customer-balance-summary');
+Route::post('customer-summary-details', 'backend\AccountsReportController@customer_summary_details')->name('customer-summary-details');
  
 });
