@@ -11,9 +11,6 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
 @push('css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css" rel="stylesheet" />
     <style>
-        td{
-            text-align: right !important;
-        }
         th{
             /* text-transform: uppercase; */
             font-size: 11px !important;
@@ -24,6 +21,11 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
     @media(min-width: 992px){
         .modal-lg{
             
+        }
+    }
+    @media print {
+        .menu-accordion{
+            visibility: hidden;
         }
     }
 </style>
@@ -41,8 +43,8 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                     <div class="row">
                         <div class="col-md-12 text-center">
                             {{-- {{isset($searchDate)? $searchDate: (isset($searchDatefrom)? $searchDatefrom." to ".$searchDateto: date('d M Y')) }} --}}
-                            <h5>{{ $company_name->config_value}}</h5>
-                            <h4> AR Ageing Details By Invoice Due Date</h4>
+                            <h4>{{ $company_name->config_value}}</h4>
+                            <h6> AR Ageing Details By Invoice Due Date</h6>
                         </div>
 
                         {{-- <div class="col-md-2 text-right  col-left-padding">
@@ -96,16 +98,7 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                             </div>
                         </div>
                         <div class="col-md-6">
-                            @if(isset($date))
-                            <a href="{{ route('invoiceWiseDailySalePrintDate',$date) }}" class="btn btn-sm btn-info float-right"
-                            target="_blank">Print</a>
-                            @elseif (isset($searchDatefrom))
-                            <a href="{{ route('invoiceWiseDailySalePrintRange',['from'=>$from,'to'=>$to]) }}" class="btn btn-sm btn-info float-right"
-                            target="_blank">Print</a>
-                            @else
-                            <a href="{{ route('invoiceWiseDailySalePrint') }}" class="btn btn-sm btn-info float-right"
-                            target="_blank">Print</a>
-                            @endif
+                            <a href="#" class="btn btn-sm btn-info float-right" id="pagePrint">Print</a>
                             {{-- <button class="btn  btn-info btn-sm float-right mr-1"
                         onclick="exportTableToCSV('stockPosition-{{ date('d M Y') }}.csv')">Export To CSV</button> --}}
                         </div>
@@ -175,8 +168,8 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
 
                                     @endphp
                                 </td>
-                                <td>{{ $invoice->grand_total }}</td>
-                                <td>{{ $invoice->grand_total }}</td>                                
+                                <td class="text-right">{{ $invoice->grand_total }}</td>
+                                <td class="text-right">{{ $invoice->grand_total }}</td>                                
                                 </tr>
                                 
                                 
@@ -365,80 +358,83 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/js/toastr.js"></script>
     {{-- <script src="{{ asset('assets/backend/app-assets/vendors/js/jquery/jquery.min.js') }}"></script> --}}
     <script>
-      $(document).ready(function() {
+        $(document).ready(function() {
 
-        $(document).on("click", ".customer-details", function(e) { 
-            e.preventDefault();
-            
-            var id= $(this).attr('id');
-            // alert(id);
-            $.ajax({
-                url: "{{URL('customer-invoice-report')}}",
-                method: "POST",
-                cache: false,
-                data:{
-                    _token:'{{ csrf_token() }}',
-                    id:id,
-                },
-                success: function(response){				
-                    document.getElementById("projectViewDetails").innerHTML = response;
-                    $('#projectViewModal').modal('show');
+            $(document).on("click", ".customer-details", function(e) { 
+                e.preventDefault();
+                
+                var id= $(this).attr('id');
+                // alert(id);
+                $.ajax({
+                    url: "{{URL('customer-invoice-report')}}",
+                    method: "POST",
+                    cache: false,
+                    data:{
+                        _token:'{{ csrf_token() }}',
+                        id:id,
+                    },
+                    success: function(response){				
+                        document.getElementById("projectViewDetails").innerHTML = response;
+                        $('#projectViewModal').modal('show');
+                    }
+                });
+            });
+
+
+            $(document).on("click", ".invoice-details", function(e) { 
+                e.preventDefault();
+                
+                var id= $(this).attr('id');
+                //   alert(id);
+                $.ajax({
+                    url: "{{URL('invoice-view-modal')}}",
+                    method: "POST",
+                    cache: false,
+                    data:{
+                        _token:'{{ csrf_token() }}',
+                        id:id,
+                    },
+                    success: function(response){				
+                        document.getElementById("invoice-details-content").innerHTML = response;
+                        $('#invoice-modal').modal('show');
+                    }
+                });
+            });
+
+
+            $('#filter').change(function() {
+
+                if ($(this).val() != '') {
+                    var date = $('#hidden_date').val();
+
+                    var from = $('#hidden_date_from').val();
+
+                    var to = $('#hidden_date_to').val();
+
+                    var value = $(this).val();
+
+                    var _token = $('input[name="_token"]').val();
+                    $.ajax({
+                        url: "{{ route('filterInvoiceWiseSaleReport') }}",
+                        method: "POST",
+                        data: {
+                            value: value,
+                            date:date,
+                            from:from,
+                            to:to,
+                            _token: _token,
+                        },
+                        success: function(response) {
+                            $(".invoice-tbody").empty().append(response.page);
+                        }
+                    })
                 }
             });
+            $(document).on("click", "#pagePrint", function(e){
+                e.preventDefault();
+                window.print();
+            });
         });
-
-
-      $(document).on("click", ".invoice-details", function(e) { 
-          e.preventDefault();
-          
-          var id= $(this).attr('id');
-        //   alert(id);
-          $.ajax({
-              url: "{{URL('invoice-view-modal')}}",
-              method: "POST",
-              cache: false,
-              data:{
-                  _token:'{{ csrf_token() }}',
-                  id:id,
-              },
-              success: function(response){				
-                  document.getElementById("invoice-details-content").innerHTML = response;
-                  $('#invoice-modal').modal('show');
-              }
-          });
-      });
-
-
-        $('#filter').change(function() {
-
-            if ($(this).val() != '') {
-                var date = $('#hidden_date').val();
-
-                var from = $('#hidden_date_from').val();
-
-                var to = $('#hidden_date_to').val();
-
-                var value = $(this).val();
-
-                var _token = $('input[name="_token"]').val();
-                $.ajax({
-                    url: "{{ route('filterInvoiceWiseSaleReport') }}",
-                    method: "POST",
-                    data: {
-                        value: value,
-                        date:date,
-                        from:from,
-                        to:to,
-                        _token: _token,
-                    },
-                    success: function(response) {
-                        $(".invoice-tbody").empty().append(response.page);
-                    }
-                })
-            }
-        });
-
-});
     </script>
 
 

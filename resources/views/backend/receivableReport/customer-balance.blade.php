@@ -8,29 +8,24 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
 
 @endphp
 @section('title', 'Customer Balance')
-@push('css')
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css" rel="stylesheet" />
-    <style>
-        td{
-            text-align: right !important;
-        }
-        th{
-            /* text-transform: uppercase; */
-            font-size: 11px !important;
-        }
-    </style>
-@endpush
 <style>
     @media(min-width: 992px){
         .modal-lg{
             
         }
     }
+    
+    @media print {
+        .menu-accordion{
+            visibility: hidden;
+        }
+        .party-name{
+            text-decoration: none !important;
+            color: black;
+        }
+    }
 </style>
 @section('content')
-@php
-
-@endphp
     <!-- BEGIN: Content-->
     <div class="app-content content">
         <div class="content-overlay"></div>
@@ -41,8 +36,8 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                     <div class="row">
                         <div class="col-md-12 text-center">
                             {{-- {{isset($searchDate)? $searchDate: (isset($searchDatefrom)? $searchDatefrom." to ".$searchDateto: date('d M Y')) }} --}}
-                            <h5>{{ $company_name->config_value}}</h5>
-                            <h4> Customer Balance</h4>
+                            <h4>{{ $company_name->config_value}}</h4>
+                            <h5> Customer Balance</h5>
                         </div>
 
                         {{-- <div class="col-md-2 text-right  col-left-padding">
@@ -96,28 +91,18 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                             </div>
                         </div>
                         <div class="col-md-6">
-                            @if(isset($date))
-                            <a href="{{ route('invoiceWiseDailySalePrintDate',$date) }}" class="btn btn-sm btn-info float-right"
-                            target="_blank">Print</a>
-                            @elseif (isset($searchDatefrom))
-                            <a href="{{ route('invoiceWiseDailySalePrintRange',['from'=>$from,'to'=>$to]) }}" class="btn btn-sm btn-info float-right"
-                            target="_blank">Print</a>
-                            @else
-                            <a href="{{ route('invoiceWiseDailySalePrint') }}" class="btn btn-sm btn-info float-right"
-                            target="_blank">Print</a>
-                            @endif
+                            <a href="#" class="btn btn-sm btn-info float-right" id="pagePrint">Print</a>
                             {{-- <button class="btn  btn-info btn-sm float-right mr-1"
                         onclick="exportTableToCSV('stockPosition-{{ date('d M Y') }}.csv')">Export To CSV</button> --}}
                         </div>
                         <div class="table-responsive pt-1">
                             <table class="table table-sm table-bordered">
-                                <tr>
+                                <tr style="height: 40px;">
                                     <th>SL No</th>
                                     <th>Customer Name</th>
                                     <th>Invoice Balance</th>
                                     <th>Available Credit</th>
                                     <th>Balance</th>
-                                    
                                 </tr>
                                 <tbody class="invoice-tbody">
                                     @php
@@ -128,13 +113,13 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                                @foreach($invoicess as $inv)
 
                                <tr>
-                                <td>{{ $loop->index+1 }}</td>
+                                <td class="text-center">{{ $loop->index+1 }}</td>
                                 <td>
-                                    <a href="#" class="btn customer-details" id="{{ $inv->customer_name}}"> {{ $inv->partyInfo($inv->customer_name)->pi_name }}</a>
+                                    <a href="#" class="customer-details party-name" id="{{ $inv->customer_name}}"> {{ $inv->partyInfo($inv->customer_name)->pi_name }}</a>
                                 </td>
-                                <td>{{ $inv->total_invoice_amount }}</td>
-                                <td>{{ $available_credit= ($inv->partyInfo($inv->customer_name)->credit_limit -  $inv->total_invoice_amount) }}</td>
-                                <td>{{ $balance= $inv->total_invoice_amount - $available_credit }}</td>                               
+                                <td class="text-right">{{ $inv->total_invoice_amount }}</td>
+                                <td class="text-right">{{ $available_credit= ($inv->partyInfo($inv->customer_name)->credit_limit -  $inv->total_invoice_amount) }}</td>
+                                <td class="text-right">{{ $balance= $inv->total_invoice_amount - $available_credit }}</td>                               
                                 </tr>
                                     @php
                                         $grand_total_invoice=$grand_total_invoice+$inv->total_invoice_amount;
@@ -142,11 +127,11 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                                         $grand_total_balance=$grand_total_balance+$balance;
                                     @endphp
                                 @endforeach
-                                <tr>
+                                <tr class="border-bottom">
                                     <td colspan="2" style="text-center">Grand Total</td>
-                                    <td>{{ number_format((float)$grand_total_invoice,'2','.','')}}</td>
-                                    <td>{{ number_format((float)$grand_total_credit,'2','.','')}}</td>
-                                    <td>{{ number_format((float)$grand_total_balance,'2','.','')}}</td>
+                                    <td class="text-right">{{ number_format((float)$grand_total_invoice,'2','.','')}}</td>
+                                    <td class="text-right">{{ number_format((float)$grand_total_credit,'2','.','')}}</td>
+                                    <td class="text-right">{{ number_format((float)$grand_total_balance,'2','.','')}}</td>
 
                                 </tr>
                                 </tbody>
@@ -196,15 +181,35 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/js/toastr.js"></script>
     {{-- <script src="{{ asset('assets/backend/app-assets/vendors/js/jquery/jquery.min.js') }}"></script> --}}
     <script>
-      $(document).ready(function() {
+        $(document).ready(function() {
 
-        $(document).on("click", ".customer-details", function(e) { 
+            $(document).on("click", ".customer-details", function(e) { 
+                e.preventDefault();
+                
+                var id= $(this).attr('id');
+                // alert(id);
+                $.ajax({
+                    url: "{{URL('customer-invoice-report')}}",
+                    method: "POST",
+                    cache: false,
+                    data:{
+                        _token:'{{ csrf_token() }}',
+                        id:id,
+                    },
+                    success: function(response){				
+                        document.getElementById("projectViewDetails").innerHTML = response;
+                        $('#projectViewModal').modal('show');
+                    }
+                });
+            });
+
+            $(document).on("click", ".invoice-details", function(e) { 
             e.preventDefault();
             
             var id= $(this).attr('id');
-            // alert(id);
+                //   alert(id);
             $.ajax({
-                url: "{{URL('customer-invoice-report')}}",
+                url: "{{URL('invoice-view-modal')}}",
                 method: "POST",
                 cache: false,
                 data:{
@@ -212,64 +217,46 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                     id:id,
                 },
                 success: function(response){				
-                    document.getElementById("projectViewDetails").innerHTML = response;
-                    $('#projectViewModal').modal('show');
+                    document.getElementById("invoice-details-content").innerHTML = response;
+                    $('#invoice-modal').modal('show');
                 }
             });
+            });
+
+            $('#filter').change(function() {
+
+                if ($(this).val() != '') {
+                    var date = $('#hidden_date').val();
+
+                    var from = $('#hidden_date_from').val();
+
+                    var to = $('#hidden_date_to').val();
+
+                    var value = $(this).val();
+
+                    var _token = $('input[name="_token"]').val();
+                    $.ajax({
+                        url: "{{ route('filterInvoiceWiseSaleReport') }}",
+                        method: "POST",
+                        data: {
+                            value: value,
+                            date:date,
+                            from:from,
+                            to:to,
+                            _token: _token,
+                        },
+                        success: function(response) {
+                            $(".invoice-tbody").empty().append(response.page);
+                        }
+                    })
+                }
+            });
+            $(document).on("click", "#pagePrint", function(e){
+                e.preventDefault();
+                window.print();
+            });
+
         });
-
-
-      $(document).on("click", ".invoice-details", function(e) { 
-          e.preventDefault();
-          
-          var id= $(this).attr('id');
-        //   alert(id);
-          $.ajax({
-              url: "{{URL('invoice-view-modal')}}",
-              method: "POST",
-              cache: false,
-              data:{
-                  _token:'{{ csrf_token() }}',
-                  id:id,
-              },
-              success: function(response){				
-                  document.getElementById("invoice-details-content").innerHTML = response;
-                  $('#invoice-modal').modal('show');
-              }
-          });
-      });
-
-
-        $('#filter').change(function() {
-
-            if ($(this).val() != '') {
-                var date = $('#hidden_date').val();
-
-                var from = $('#hidden_date_from').val();
-
-                var to = $('#hidden_date_to').val();
-
-                var value = $(this).val();
-
-                var _token = $('input[name="_token"]').val();
-                $.ajax({
-                    url: "{{ route('filterInvoiceWiseSaleReport') }}",
-                    method: "POST",
-                    data: {
-                        value: value,
-                        date:date,
-                        from:from,
-                        to:to,
-                        _token: _token,
-                    },
-                    success: function(response) {
-                        $(".invoice-tbody").empty().append(response.page);
-                    }
-                })
-            }
-        });
-
-});
     </script>
 
 

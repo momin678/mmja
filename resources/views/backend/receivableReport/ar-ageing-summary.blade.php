@@ -11,9 +11,6 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
 @push('css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css" rel="stylesheet" />
     <style>
-        td{
-            text-align: right !important;
-        }
         th{
             /* text-transform: uppercase; */
             font-size: 11px !important;
@@ -24,6 +21,15 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
     @media(min-width: 992px){
         .modal-lg{
             
+        }
+    }
+    @media print {
+        .menu-accordion{
+            visibility: hidden;
+        }
+        .party-name{
+            text-decoration: none !important;
+            color: black;
         }
     }
 </style>
@@ -41,8 +47,8 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                     <div class="row">
                         <div class="col-md-12 text-center">
                             {{-- {{isset($searchDate)? $searchDate: (isset($searchDatefrom)? $searchDatefrom." to ".$searchDateto: date('d M Y')) }} --}}
-                            <h5>{{ $company_name->config_value}}</h5>
-                            <h4> AR Ageing Summary By Invoice Due Date</h4>
+                            <h4>{{ $company_name->config_value}}</h4>
+                            <h6> AR Ageing Summary By Invoice Due Date</h6>
                         </div>
 
                         {{-- <div class="col-md-2 text-right  col-left-padding">
@@ -96,16 +102,7 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                             </div>
                         </div>
                         <div class="col-md-6">
-                            @if(isset($date))
-                            <a href="{{ route('invoiceWiseDailySalePrintDate',$date) }}" class="btn btn-sm btn-info float-right"
-                            target="_blank">Print</a>
-                            @elseif (isset($searchDatefrom))
-                            <a href="{{ route('invoiceWiseDailySalePrintRange',['from'=>$from,'to'=>$to]) }}" class="btn btn-sm btn-info float-right"
-                            target="_blank">Print</a>
-                            @else
-                            <a href="{{ route('invoiceWiseDailySalePrint') }}" class="btn btn-sm btn-info float-right"
-                            target="_blank">Print</a>
-                            @endif
+                            <a href="#" class="btn btn-sm btn-info float-right" id="pagePrint">Print</a>
                             {{-- <button class="btn  btn-info btn-sm float-right mr-1"
                         onclick="exportTableToCSV('stockPosition-{{ date('d M Y') }}.csv')">Export To CSV</button> --}}
                         </div>
@@ -131,15 +128,15 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
 
                                <tr>
                                 <td>
-                                    <a href="{{ route('ar-ageing-summary-one', $party->id) }}" target="_blank">{{ $party->pi_name }}</a>
+                                    <a href="{{ route('ar-ageing-summary-one', $party->id) }}" target="_blank" class="party-name">{{ $party->pi_name }}</a>
                                 </td>
-                                <td>{{ $party->current }}</td>
-                                <td>{{ $party->days_1_15 }}</td>
-                                <td>{{ $party->days_16_30 }}</td>
-                                <td>{{ $party->days_31_45 }}</td>
-                                <td>{{ $party->days_46_60 }}</td>
-                                <td>{{ $party->days_up_60 }}</td>
-                                <td>{{ $party->gtotal }}</td>
+                                <td class="text-right">{{ $party->current }}</td>
+                                <td class="text-right">{{ $party->days_1_15 }}</td>
+                                <td class="text-right">{{ $party->days_16_30 }}</td>
+                                <td class="text-right">{{ $party->days_31_45 }}</td>
+                                <td class="text-right">{{ $party->days_46_60 }}</td>
+                                <td class="text-right">{{ $party->days_up_60 }}</td>
+                                <td class="text-right">{{ $party->gtotal }}</td>
                                 {{-- <td>
                                     <a href="#" class="btn customer-details" id="{{ $party->customer_name}}"> {{ $party->partyInfo($party->customer_name)->pi_name }}</a>
                                 </td>
@@ -229,12 +226,11 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
             });
         });
 
-
-      $(document).on("click", ".invoice-details", function(e) { 
+        $(document).on("click", ".invoice-details", function(e) { 
           e.preventDefault();
           
           var id= $(this).attr('id');
-        //   alert(id);
+            //   alert(id);
           $.ajax({
               url: "{{URL('invoice-view-modal')}}",
               method: "POST",
@@ -248,8 +244,7 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                   $('#invoice-modal').modal('show');
               }
           });
-      });
-
+        });
 
         $('#filter').change(function() {
 
@@ -279,8 +274,12 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                 })
             }
         });
-
-});
+        
+        $(document).on("click", "#pagePrint", function(e){
+            e.preventDefault();
+            window.print();
+        });
+    });
     </script>
 
 
