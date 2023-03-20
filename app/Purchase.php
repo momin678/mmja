@@ -46,7 +46,4 @@ class Purchase extends Model
         // return $itm;
         return $this->hasMany(StockTransection::class, 'transection_id')->where('item_id',$itm)->where('stock_effect',1)->sum('quantity');
     }
-    public function paid_amount(){
-        return $this->hasMany(PaymentVoucher::class, 'po_no', 'purchase_no');
-    }
 }

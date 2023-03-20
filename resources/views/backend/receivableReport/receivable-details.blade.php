@@ -42,7 +42,7 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                         <div class="col-md-12 text-center">
                             {{-- {{isset($searchDate)? $searchDate: (isset($searchDatefrom)? $searchDatefrom." to ".$searchDateto: date('d M Y')) }} --}}
                             <h5>{{ $company_name->config_value}}</h5>
-                            <h4> Receivable Summary</h4>
+                            <h4> Receivable Details</h4>
                             <h5> {{ $party_info->pi_name}}</h5>
                         </div>
 
@@ -137,7 +137,7 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                                     @endif
                                     
                                 </td>
-                                <td>{{ $invoice->date }}</td>
+                                <td>{{ Carbon\Carbon::parse($invoice->date)->format('d-m-Y') }} </td>
                                 <td>{{ $invoice->invoice_no }}</td>
                                 <td>-</td>
                                 <td>Sent</td>

@@ -5,12 +5,8 @@ namespace App\Http\Controllers\backend;
 use App\Http\Controllers\Controller;
 use App\Invoice;
 use App\InvoiceItem;
-use App\ItemList;
 use App\JournalRecordsTemp;
-use App\Models\AccountHead;
 use App\PartyInfo;
-use App\Purchase;
-use App\PurchaseReturn;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -300,45 +296,5 @@ class AccountsReportController extends Controller
         $invoicess = $invoicess->paginate(25)->withQueryString();
         return view('backend.receivableReport.customer-order',compact('invoicess'));
     }
-    public function vendor_balances(Request $request){
-        $customers = PartyInfo::where('pi_type', 'Supplier')->paginate(25);
-        return view('backend.payables.vendor-balances',compact('customers'));
-    }
-    public function vendor_balances_details(Request $request){
-        $vendor = PartyInfo::find($request->id);
-        $purchases = Purchase::where('supplier_id', $request->id)->get();
-        return view('backend.payables.vendor-balances-details', compact('vendor', 'purchases'));
-    }
-    public function vendor_balance_summary(Request $request){
-        $customers = PartyInfo::where('pi_type', 'Supplier')->paginate(25);
-        return view('backend.payables.vendor-balance-summary',compact('customers'));
-    }
-    public function bills_details(Request $request){
-        $purchases = Purchase::orderBy('id', 'desc')->paginate(25);
-        return view('backend.payables.bills-details',compact('purchases'));
-    }
-    public function vendor_debit_details(Request $request){
-        $returns = PurchaseReturn::orderBy('id', 'desc')->paginate(25);
-        return view('backend.payables.vendor-debit-details',compact('returns'));
-    }
-    public function purchase_order_details(Request $request){
-        $purchases = Purchase::orderBy('id', 'desc')->paginate(25);
-        return view('backend.payables.purchase-order-details',compact('purchases'));
-    }
-    public function purchase_order_by_vendor(Request $request){
-        $customers = PartyInfo::where('pi_type', 'Supplier')->paginate(25);
-        return view('backend.payables.purchase-order-by-vendor',compact('customers'));
-    }
-    public function purchase_by_vendor(Request $request){
-        $customers = PartyInfo::where('pi_type', 'Supplier')->paginate(25);
-        return view('backend.payables.purchase-by-vendor',compact('customers'));
-    }
-    public function purchase_by_item(Request $request){
-        $items = ItemList::all();
-        return view('backend.payables.purchase-by-item',compact('items'));
-    }
-    public function expenses_details(Request $request){
-        $accounts = AccountHead::all();
-        return view('backend.payables.expenses-details',compact('accounts'));
-    }
+
 }

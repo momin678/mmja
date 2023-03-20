@@ -136,7 +136,7 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                                     @endif
                                     
                                 </td>
-                                <td>{{ $invoice->date }}</td>
+                                <td>{{ Carbon\Carbon::parse($invoice->date)->format('d-m-Y') }} </td>
                                 <td>{{ $invoice->invoice_no }}</td>
                                 <td>-</td>
                                 <td>Sent</td>

@@ -576,14 +576,5 @@ Route::get('tax-invoice-detail', 'backend\AccountsReportController@tax_invoice_d
 Route::get('customer-order', 'backend\AccountsReportController@customer_order')->name('customer-order');
 Route::get('customer-balance-summary', 'backend\AccountsReportController@customer_balance_summary')->name('customer-balance-summary');
 Route::post('customer-summary-details', 'backend\AccountsReportController@customer_summary_details')->name('customer-summary-details');
-Route::get('vendor-balance-summary', 'backend\AccountsReportController@vendor_balance_summary')->name('vendor-balance-summary');
-Route::get('vendor-balances', 'backend\AccountsReportController@vendor_balances')->name('vendor-balances');
-Route::post('vendor-balances-details', 'backend\AccountsReportController@vendor_balances_details')->name('vendor-balances-details');
-Route::get('bills-details', 'backend\AccountsReportController@bills_details')->name('bills-details');
-Route::get('vendor-debit-details', 'backend\AccountsReportController@vendor_debit_details')->name('vendor-debit-details');
-Route::get('purchase-order-details', 'backend\AccountsReportController@purchase_order_details')->name('purchase-order-details');
-Route::get('purchase-order-by-vendor', 'backend\AccountsReportController@purchase_order_by_vendor')->name('purchase-order-by-vendor');
-Route::get('purchase-by-vendor', 'backend\AccountsReportController@purchase_by_vendor')->name('purchase-by-vendor');
-Route::get('purchase-by-item', 'backend\AccountsReportController@purchase_by_item')->name('purchase-by-item');
-Route::get('expenses-details', 'backend\AccountsReportController@expenses_details')->name('expenses-details');
+ 
 });

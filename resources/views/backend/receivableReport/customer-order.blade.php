@@ -62,7 +62,7 @@
                                                 <span>Paid</span>
                                             @endif
                                         </td>
-                                        <td>{{ $invoice->date }}</td>
+                                        <td>{{ Carbon\Carbon::parse($invoice->date)->format('d-m-Y') }} </td>
                                         <td></td>
                                         <td><a href="#" class="invoice-details" id="{{ $invoice->invoice_no }}">{{ $invoice->invoice_no }}</a></td>
                                         <td>{{ $invoice->partyInfo($invoice->customer_name)->pi_name }}</td>

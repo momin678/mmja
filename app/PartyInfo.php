@@ -13,10 +13,5 @@ class PartyInfo extends Model
     {
         return $this->hasMany(Journal::class,'party_info_id');
     }
-    public function purchase(){
-        return $this->hasMany(Purchase::class, 'supplier_id');
-    }
-    public function paidAmount(){
-        return $this->hasMany(PaymentVoucher::class, 'supplier_id');
-    }
+
 }

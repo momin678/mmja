@@ -224,8 +224,6 @@ class ItemList extends Model
 
 
     // Tarek End
-    public function purchaseItem(){
-        return $this->hasMany(PurchaseDetail::class, 'item_id');
-    }
+
 
 }

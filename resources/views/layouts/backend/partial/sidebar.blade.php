@@ -264,13 +264,13 @@
                         <li class="{{ Request::is('item-purchase*') || Request::is("po-generation-approval-list") || Request::is("po-generation-approval-details") ? 'active' : ''}}">
                             <a class="d-flex align-items-center" href="#">
                                 <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item text-truncate" data-i18n="PO Generation">Retainer invoice details</span>
+                                <span class="menu-item text-truncate" data-i18n="PO Generation">Retainer Invoice Details</span>
                             </a>
                         </li>
                         <li class="{{ Request::is('customer-order*') ? 'active' : ''}}">
                             <a class="d-flex align-items-center" href="{{route('customer-order')}}">
                                 <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item text-truncate" data-i18n="PO Generation">Sales order details</span>
+                                <span class="menu-item text-truncate" data-i18n="PO Generation">Sales Order Details</span>
                             </a>
                         </li>
                         <li class="{{ Request::is('item-purchase*') || Request::is("po-generation-approval-list") || Request::is("po-generation-approval-details") ? 'active' : ''}}">
@@ -288,13 +288,13 @@
                         <li class="{{ Request::is('customer-balance-summary*') ? 'active' : ''}}">
                             <a class="d-flex align-items-center" href="{{route('customer-balance-summary')}}">
                                 <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item text-truncate" data-i18n="PO Generation">Customer balance summary</span>
+                                <span class="menu-item text-truncate" data-i18n="PO Generation">Customer Balance Summary</span>
                             </a>
                         </li>
                         <li class="{{ Request::is('receivable-summary') ? 'active' : ''}}">
                             <a class="d-flex align-items-center" href="{{route('receivable-summary')}}">
                                 <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item text-truncate" data-i18n="PO Generation">Receivable summary</span>
+                                <span class="menu-item text-truncate" data-i18n="PO Generation">Receivable Summary</span>
                             </a>
                         </li>
                         <li class="{{ Request::is('item-purchase*') || Request::is("po-generation-approval-list") || Request::is("po-generation-approval-details") ? 'active' : ''}}">
@@ -313,72 +313,7 @@
                     </ul>
                 </li>
                 {{-- End: Receivables --}}
-                {{-- Payables --}}
-                <li class=" nav-item"><a href="#"><i class="bx bx-user-plus"></i><span class="menu-title text-truncate" data-i18n="Purchase">Payables</span></a>
-                    <ul class="menu-content">
-                        <li class="{{ Request::is('vendor-balances*') ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('vendor-balances')}}">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item text-truncate" data-i18n="Vendor Balances">Vendor Balances</span>
-                            </a>
-                        </li>
-                        <li class="{{ Request::is('vendor-balance-summary*') ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('vendor-balance-summary')}}">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item text-truncate" data-i18n="Vendor Balance Summary">Vendor Balance Summary</span>
-                            </a>
-                        </li>
-                        <li class="{{ Request::is('bills-details*') ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('bills-details')}}">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item text-truncate" data-i18n="Bills details">Bills details</span>
-                            </a>
-                        </li>
-                        <li class="{{ Request::is('vendor-debit-details*') ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('vendor-debit-details')}}">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item text-truncate" data-i18n="Vendor Debit Details">Vendor Debit Details</span>
-                            </a>
-                        </li>
-                        <li class="{{ Request::is('purchase-order-details*') ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('purchase-order-details')}}">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item text-truncate" data-i18n="Purchase Order Details">Purchase Order Details</span>
-                            </a>
-                        </li>
-                        <li class="{{ Request::is('purchase-order-by-vendor*') ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('purchase-order-by-vendor')}}">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item text-truncate" data-i18n="Purchase Orders by Vendor">Purchase Orders by Vendor</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                {{-- Payables --}}
-                {{-- Purchase and Expenses --}}
-                <li class=" nav-item"><a href="#"><i class="bx bx-user-plus"></i><span class="menu-title text-truncate" data-i18n="Purchase">Purchase and Expenses</span></a>
-                    <ul class="menu-content">
-                        <li class="{{ Request::is('purchase-by-vendor*') ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('purchase-by-vendor')}}">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item text-truncate" data-i18n="Purchase by vendor">Purchase by vendor</span>
-                            </a>
-                        </li>
-                        <li class="{{ Request::is('purchase-by-item*') ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('purchase-by-item')}}">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item text-truncate" data-i18n="Purchase by Item">Purchase by Item</span>
-                            </a>
-                        </li>
-                        <li class="{{ Request::is('expenses-details*') ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="{{route('expenses-details')}}">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item text-truncate" data-i18n="Expenses Details">Expenses Details</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                {{-- Purchase and Expenses --}}
+
                 
             @endif
             {{-- end of Report --}}

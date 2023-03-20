@@ -28,7 +28,7 @@
         @foreach($invoices as $inv)
 
         <tr>
-        <td>{{ $inv->date }}</td>
+        <td>{{ Carbon\Carbon::parse($inv->date)->format('d-m-Y') }} </td>
         <td>
             <a href="#" class="btn invoice-details" id="{{ $inv->invoice_no}}"> {{ $inv->invoice_no }}</a>
         </td>
