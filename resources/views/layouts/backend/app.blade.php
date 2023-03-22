@@ -11,7 +11,8 @@
     <meta name="author" content="PIXINVENT">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @php
-    $settings= \App\Setting::where('config_name', 'title_name')->first()
+        $settings= \App\Setting::where('config_name', 'title_name')->first();
+        $company_name= \App\Setting::where('config_name', 'company_name')->first();
     @endphp
     <title>{{ $settings->config_value}} - @yield('title') </title>
     <link rel="apple-touch-icon" href="{{ asset('assets/backend')}}/app-assets/images/ico/apple-icon-120.png">
@@ -37,6 +38,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/backend')}}/app-assets/css/plugins/forms/validation/form-validation.css">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/backend/')}}/app-assets/vendors/css/extensions/toastr.css">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/backend/')}}/app-assets/css/plugins/extensions/toastr.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/backend/')}}/app-assets/datatables/css/dataTables.min.css">
 
     <!-- END: Page CSS-->
 
@@ -103,6 +105,33 @@
         /* padding-left: 0px !important; */
         }
         /* Tareq custom css */
+        
+        div.dt-buttons {
+            float: right;
+            margin-bottom: 10px;
+        }
+        @media print {
+            .menu-accordion{
+                visibility: hidden;
+            }
+            .dt-buttons{
+                visibility: hidden;
+            }
+            .footer{
+                visibility: hidden;   
+            }
+            a{
+                text-decoration: none !important;
+                color: black;
+            }
+            .print-menu{
+                visibility: hidden;
+            }
+            .modal-content{
+                min-width: 99%;
+                min-height: 100vh;
+            }
+        }
     </style>
 </head>
 <!-- END: Head-->
@@ -219,6 +248,10 @@
 
     <script src="{{ asset('assets/backend')}}/app-assets/vendors/js/forms/select/select2.full.min.js"></script>
     <script src="{{ asset('assets/backend')}}/app-assets/js/scripts/forms/select/form-select2.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-html5-2.3.6/b-print-2.3.6/datatables.min.js"></script>
+    
 
     <!-- BEGIN: Page JS-->
     @stack('js')
@@ -252,125 +285,144 @@
                     break;
             }
         @endif
-        </script>
+    </script>
 
+    <script>
+        function downloadCSV(csv, filename) {
+            var csvFile;
+            var downloadLink;
 
+            // CSV file
+            csvFile = new Blob([csv], {
+                type: "text/csv"
+            });
 
-<script>
-    function downloadCSV(csv, filename) {
-        var csvFile;
-        var downloadLink;
+            // Download link
+            downloadLink = document.createElement("a");
 
-        // CSV file
-        csvFile = new Blob([csv], {
-            type: "text/csv"
+            // File name
+            downloadLink.download = filename;
+
+            // Create a link to the file
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+
+            // Hide download link
+            downloadLink.style.display = "none";
+
+            // Add the link to DOM
+            document.body.appendChild(downloadLink);
+
+            // Click download link
+            downloadLink.click();
+        }
+
+        function exportTableToCSV(filename) {
+            var csv = [];
+            var rows = document.querySelectorAll("table tr");
+
+            for (var i = 0; i < rows.length; i++) {
+                var row = [],
+                    cols = rows[i].querySelectorAll("td, th");
+
+                for (var j = 0; j < cols.length; j++)
+                    row.push("\"" + cols[j].innerText + "\"");
+
+                csv.push(row.join(","));
+            }
+
+            // Download CSV file
+            downloadCSV(csv.join("\n"), filename);
+        }
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            toastr.options.timeOut = 10000;
+            @if (Session::has('error'))
+                toastr.error('{{ Session::get('error') }}');
+            @elseif(Session::has('success'))
+                toastr.success('{{ Session::get('success') }}');
+            @endif
         });
+        $(document).ready(function() {
 
-        // Download link
-        downloadLink = document.createElement("a");
-
-        // File name
-        downloadLink.download = filename;
-
-        // Create a link to the file
-        downloadLink.href = window.URL.createObjectURL(csvFile);
-
-        // Hide download link
-        downloadLink.style.display = "none";
-
-        // Add the link to DOM
-        document.body.appendChild(downloadLink);
-
-        // Click download link
-        downloadLink.click();
-    }
-
-    function exportTableToCSV(filename) {
-        var csv = [];
-        var rows = document.querySelectorAll("table tr");
-
-        for (var i = 0; i < rows.length; i++) {
-            var row = [],
-                cols = rows[i].querySelectorAll("td, th");
-
-            for (var j = 0; j < cols.length; j++)
-                row.push("\"" + cols[j].innerText + "\"");
-
-            csv.push(row.join(","));
-        }
-
-        // Download CSV file
-        downloadCSV(csv.join("\n"), filename);
-    }
-</script>
-
-
-
-
-<script>
-    $(document).ready(function() {
-        toastr.options.timeOut = 10000;
-        @if (Session::has('error'))
-            toastr.error('{{ Session::get('error') }}');
-        @elseif(Session::has('success'))
-            toastr.success('{{ Session::get('success') }}');
-        @endif
-    });
-$(document).ready(function() {
-
-    $(document).on('keypress', '.ajax-search', function(e) {
-        if (e.which == 13) {
-            e.preventDefault();
-        }
-    });
-
-
-    /////////////////////////////////////
-
-    var delay = (function() {
-        var timer = 0;
-        return function(callback, ms) {
-            clearTimeout(timer);
-            timer = setTimeout(callback, ms);
-        };
-    })();
-
-    $(document).on("keyup", ".ajax-search", function(e) {
-        e.preventDefault();
-        // alert('ok');
-        var that = $(this);
-        var q = e.target.value;
-        var url = that.attr("data-url");
-        var urls = url + '?q=' + q;
-        // var datalist = $("#products");
-        // datalist.empty();
-        // alert(urls);
-
-
-        delay(function() {
-            $.ajax({
-                url: urls,
-                type: 'GET',
-                cache: false,
-                dataType: 'json',
-                success: function(response) {
-                    //   alert('ok');
-                    // console.log(response);
-                    // $(".pagination").remove();
-                    $(".user-table-body").empty().append(response.page);
-                },
-                error: function() {
-                    //   alert('no');
+            $(document).on('keypress', '.ajax-search', function(e) {
+                if (e.which == 13) {
+                    e.preventDefault();
                 }
             });
-        }, 999);
-    });
 
 
-});
-</script>
-    <!-- END: Page JS-->
+            /////////////////////////////////////
 
+            var delay = (function() {
+                var timer = 0;
+                return function(callback, ms) {
+                    clearTimeout(timer);
+                    timer = setTimeout(callback, ms);
+                };
+            })();
+
+            $(document).on("keyup", ".ajax-search", function(e) {
+                e.preventDefault();
+                // alert('ok');
+                var that = $(this);
+                var q = e.target.value;
+                var url = that.attr("data-url");
+                var urls = url + '?q=' + q;
+                // var datalist = $("#products");
+                // datalist.empty();
+                // alert(urls);
+
+
+                delay(function() {
+                    $.ajax({
+                        url: urls,
+                        type: 'GET',
+                        cache: false,
+                        dataType: 'json',
+                        success: function(response) {
+                            //   alert('ok');
+                            // console.log(response);
+                            // $(".pagination").remove();
+                            $(".user-table-body").empty().append(response.page);
+                        },
+                        error: function() {
+                            //   alert('no');
+                        }
+                    });
+                }, 999);
+            });
+
+
+        });
+    </script>
+        <!-- END: Page JS-->
+    <script>
+        $(document).ready(function() {
+            $('.exprortTable').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        text: 'Print',
+                        action: function ( e, dt, node, config ) {
+                            window.print();
+                        }
+                    },
+                    {
+                        extend: 'pdf',
+                    },
+                    {
+                        extend: 'excel',
+                    }
+                ],
+                paging: false,
+                info: false,
+                searching: false,
+                ordering: false,
+            });
+        } );
+    </script>
 </body>
 <!-- END: Body-->
 
