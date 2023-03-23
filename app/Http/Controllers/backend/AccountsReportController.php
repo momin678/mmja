@@ -2,25 +2,26 @@
 
 namespace App\Http\Controllers\backend;
 
-use App\Exports\InvoiceExport;
-use App\Exports\PurchaseDetailsExport;
-use App\Exports\PurchaseExport;
 use App\Http\Controllers\Controller;
 use App\Invoice;
 use App\InvoiceItem;
+use App\ItemList;
 use App\JournalRecordsTemp;
+use App\Models\AccountHead;
 use App\PartyInfo;
+use App\Purchase;
+use App\PurchaseReturn;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Maatwebsite\Excel\Facades\Excel;
-use App\ItemList;
-use App\Models\AccountHead;
-use App\Purchase;
-use App\PurchaseReturn;
+
+use App\Exports\InvoiceExport;
+use App\Exports\PurchaseDetailsExport;
+use App\Exports\PurchaseExport;
 use Facade\FlareClient\Http\Response;
 use Illuminate\Support\Facades\App;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AccountsReportController extends Controller
 {
@@ -189,6 +190,7 @@ class AccountsReportController extends Controller
 
     public function customer_invoice_report(Request $request){
         $customer_id= $request->id;
+        $customer= PartyInfo::where('pi_code', $request->id)->get()->last();
         $invoices= Invoice::where('customer_name', $customer_id)->where('pay_mode', "Credit")->get();
 
         if(!$invoices)
@@ -196,7 +198,7 @@ class AccountsReportController extends Controller
             return back()->with('error', "Not Found");
         }
 
-        return view('backend.receivableReport.customer-invoice-list-modal',compact('invoices'));
+        return view('backend.receivableReport.customer-invoice-list-modal',compact('invoices','customer'));
     }
 
     public function invoice_view_modal(Request $request){
@@ -242,10 +244,12 @@ class AccountsReportController extends Controller
     public function ar_ageing_details(){
         $invoices= Invoice::orderBy('due_date', 'desc')->get();
         // return $invoices;
-        return view('backend.receivableReport.ar-ageing-details2',compact('invoices'));
+        return view('backend.receivableReport.ar-ageing-details',compact('invoices'));
     }
 
     public function receivable_summary(){
+        // return "Alhamdulillah";
+
         $invoices= Invoice::orderBy('due_date', 'desc')->paginate(25)->withQueryString();
         return view('backend.receivableReport.receivable-summary',compact('invoices'));
     }
@@ -255,6 +259,8 @@ class AccountsReportController extends Controller
         $invoices= Invoice::where('customer_name', $party_info->pi_code)->orderBy('due_date', 'desc')->paginate(25)->withQueryString();
         return view('backend.receivableReport.receivable-details',compact('invoices', 'party_info'));
     }
+
+    
     // Mominul Account Report
     public function customer_balance_summary(Request $request){
         $customers = DB::table('invoices')->select('customer_name')->groupBy('customer_name')->paginate(25);
@@ -304,9 +310,8 @@ class AccountsReportController extends Controller
         return view('backend.receivableReport.customer-order',compact('invoicess'));
     }
 
-    // previous
     public function vendor_balances(Request $request){
-        $customers = PartyInfo::where('pi_type', 'Supplier')->get();
+        $customers = PartyInfo::where('pi_type', 'Supplier')->paginate(25);
         return view('backend.payables.vendor-balances',compact('customers'));
     }
     public function vendor_balances_details(Request $request){
@@ -315,27 +320,27 @@ class AccountsReportController extends Controller
         return view('backend.payables.vendor-balances-details', compact('vendor', 'purchases'));
     }
     public function vendor_balance_summary(Request $request){
-        $customers = PartyInfo::where('pi_type', 'Supplier')->get();
+        $customers = PartyInfo::where('pi_type', 'Supplier')->paginate(25);
         return view('backend.payables.vendor-balance-summary',compact('customers'));
     }
     public function bills_details(Request $request){
-        $purchases = Purchase::orderBy('id', 'desc')->get();
+        $purchases = Purchase::orderBy('id', 'desc')->paginate(25);
         return view('backend.payables.bills-details',compact('purchases'));
     }
     public function vendor_debit_details(Request $request){
-        $returns = PurchaseReturn::orderBy('id', 'desc')->get();
+        $returns = PurchaseReturn::orderBy('id', 'desc')->paginate(25);
         return view('backend.payables.vendor-debit-details',compact('returns'));
     }
     public function purchase_order_details(Request $request){
-        $purchases = Purchase::orderBy('id', 'desc')->get();
+        $purchases = Purchase::orderBy('id', 'desc')->paginate(25);
         return view('backend.payables.purchase-order-details',compact('purchases'));
     }
     public function purchase_order_by_vendor(Request $request){
-        $customers = PartyInfo::where('pi_type', 'Supplier')->get();
+        $customers = PartyInfo::where('pi_type', 'Supplier')->paginate(25);
         return view('backend.payables.purchase-order-by-vendor',compact('customers'));
     }
     public function purchase_by_vendor(Request $request){
-        $customers = PartyInfo::where('pi_type', 'Supplier')->get();
+        $customers = PartyInfo::where('pi_type', 'Supplier')->paginate(25);
         return view('backend.payables.purchase-by-vendor',compact('customers'));
     }
     public function purchase_by_item(Request $request){
@@ -346,7 +351,8 @@ class AccountsReportController extends Controller
         $accounts = AccountHead::all();
         return view('backend.payables.expenses-details',compact('accounts'));
     }
-    // new
+
+
     public function ar_ageing_pdf_download(Request $request){
         $invoices = Invoice::all();
         $pdf = PDF::loadView('backend.receivableReport.ar-ageing-pdf', compact('invoices'));
@@ -382,4 +388,8 @@ class AccountsReportController extends Controller
         $reports =  Excel::download(new PurchaseDetailsExport($id), 'Purchase-Orders-Details.xlsx');
         return $reports;
     }
+
+    // Mominul Report End
+
+
 }

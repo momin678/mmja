@@ -594,4 +594,15 @@ Route::get('vbd-excel-download/{id}', 'backend\AccountsReportController@vbd_exce
 Route::post('purchase-order-by-vendor-details', 'backend\AccountsReportController@purchase_order_by_vendor_details')->name('purchase-order-by-vendor-details');
 Route::get('pov-pdf-download/{id}', 'backend\AccountsReportController@pov_pdf_download')->name('pov-pdf-download');
 Route::get('pov-excel-download/{id}', 'backend\AccountsReportController@pov_excel_download')->name('pov-excel-download');
+
+
+// Tarek Accounting Report
+//payable
+Route::get('ap-ageing-summary', 'backend\PayableReportController@ap_ageing_summary')->name('ap-ageing-summary');
+Route::get('ap-ageing-summary/{id}', 'backend\PayableReportController@ap_ageing_summary_one')->name('ap-ageing-summary-one');
+Route::get('ap-ageing-details', 'backend\PayableReportController@ap_ageing_details')->name('ap-ageing-details');
+Route::get('payable-summary', 'backend\PayableReportController@payable_summary')->name('payable-summary');
+Route::get('payable-details/{id}', 'backend\PayableReportController@payable_details')->name('payable-details');
+Route::get('payable-details-view', 'backend\PayableReportController@payable_details_view')->name('payable-details-view');
+
 });

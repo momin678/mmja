@@ -1,3 +1,11 @@
+@php
+$company_name= \App\Setting::where('config_name', 'company_name')->first();
+$company_address= \App\Setting::where('config_name', 'company_address')->first();
+$company_tele= \App\Setting::where('config_name', 'company_tele')->first();
+$company_email= \App\Setting::where('config_name', 'company_email')->first();
+$currency= \App\Setting::where('config_name', 'currency')->first();
+
+@endphp
 
 <section class="print-hideen border-bottom p-1">
     <div class="d-flex flex-row-reverse">
@@ -9,7 +17,8 @@
       </div>
 </section>
 <section id="widgets-Statistics" class="m-2">
-    <h4 class="ml-2 text-center">Branch Details</h4>
+    <h4 class="ml-2 text-center">{{ $company_name->config_value}}</h4>
+    <h5 class="text-center"> Customer Balance Details of {{ $customer->pi_name}}</h5>
     <table class="table table-sm table-bordered">
         <tr style="height: 50px;">
             <th>Date</th>

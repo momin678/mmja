@@ -313,9 +313,36 @@
                     </ul>
                 </li>
                 {{-- End: Receivables --}}
-{{-- Payables --}}
+
+                {{-- Payables --}}
                 <li class=" nav-item"><a href="#"><i class="bx bx-user-plus"></i><span class="menu-title text-truncate" data-i18n="Purchase">Payables</span></a>
                     <ul class="menu-content">
+                        <li class="{{ Request::is('ap-ageing-summary') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('ap-ageing-summary')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="PO Generation">AP Ageing Summary</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('ap-ageing-details') ? 'active' : ''}}">
+                        <a class="d-flex align-items-center" href="{{route('ap-ageing-details')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="PO Generation">AP Ageing Details</span>
+                            </a>
+                        </li>
+
+                        <li class="{{ Request::is('payable-summary') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('payable-summary')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="PO Generation">Payable summary</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('payable-details*') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('payable-details-view')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="PO Generation">Payable Details</span>
+                            </a>
+                        </li>
+                        
                         <li class="{{ Request::is('vendor-balances*') ? 'active' : ''}}">
                             <a class="d-flex align-items-center" href="{{route('vendor-balances')}}">
                                 <i class="bx bx-right-arrow-alt"></i>
@@ -354,7 +381,8 @@
                         </li>
                     </ul>
                 </li>
-                {{-- Payables --}}
+                {{-- End: Payables --}}
+
                 {{-- Purchase and Expenses --}}
                 <li class=" nav-item"><a href="#"><i class="bx bx-user-plus"></i><span class="menu-title text-truncate" data-i18n="Purchase">Purchase and Expenses</span></a>
                     <ul class="menu-content">

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+
 use App\JournalRecord;
 use Illuminate\Database\Eloquent\Model;
 

@@ -10,6 +10,10 @@ class ItemList extends Model
     protected $table = "items";
     protected $fillable = ['style_id', 'group_no', 'group_name', 'barcode', 'item_name', 'brand_id', 'country', 'unit', 'description', 'sell_price', 'vat_rate', 'vat_amount', 'total_amount'];
     
+    public function purchaseItem(){
+        return $this->hasMany(PurchaseDetail::class, 'item_id');
+    }
+    
     public function brandName(){
         return $this->belongsTo(Brand::class, 'brand_id');
     }
@@ -224,8 +228,6 @@ class ItemList extends Model
 
 
     // Tarek End
-    public function purchaseItem(){
-        return $this->hasMany(PurchaseDetail::class, 'item_id');
-    }
+
 
 }

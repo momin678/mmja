@@ -15,6 +15,7 @@ class PurchaseReturn extends Model
     public function notification(){
         return $this->belongsTo(Notification::class, 'purchase_id')->where('state', "PT Editor");
     }
+
     public function returnAmount($return_no, $purchase_no){
         $items = PurchaseReturnDetail::where('purchase_return_no', $return_no)->get();
         $totalAmount=0;

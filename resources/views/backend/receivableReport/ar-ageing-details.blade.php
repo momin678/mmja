@@ -8,6 +8,15 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
 
 @endphp
 @section('title', 'Customer Balance')
+@push('css')
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css" rel="stylesheet" />
+    <style>
+        th{
+            /* text-transform: uppercase; */
+            font-size: 11px !important;
+        }
+    </style>
+@endpush
 <style>
     @media(min-width: 992px){
         .modal-lg{
@@ -18,16 +27,6 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
         .menu-accordion{
             visibility: hidden;
         }
-    }
-    table td + td + td + td + td + td + td{
-        text-align: right !important;
-    }
-    tr{
-        font-size: 12px !important;
-    }
-    th{
-        /* text-transform: uppercase; */
-        font-size: 14px !important;
     }
 </style>
 @section('content')
@@ -100,26 +99,22 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                         </div>
                         <div class="col-md-6">
                             <a href="#" class="btn btn-sm btn-info float-right" id="pagePrint">Print</a>
-                            <a href="{{route('ar-ageing-pdf-download')}}" class="btn btn-sm btn-info float-right ml-1 mr-1">PDF Download</a>
-                            <a href="{{route('ar-ageing-excel-download')}}" class="btn btn-sm btn-info float-right ml-1 ">Excel Download</a>
                             {{-- <button class="btn  btn-info btn-sm float-right mr-1"
                         onclick="exportTableToCSV('stockPosition-{{ date('d M Y') }}.csv')">Export To CSV</button> --}}
                         </div>
                         <div class="table-responsive pt-1">
-                            <table class="table table-bordered table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Transaction#</th>
-                                        <th>Type</th>
-                                        <th>Status</th>
-                                        <th>Customer Name</th>
-                                        <th>Age</th>
-                                        <th>Amount</th>
-                                        <th>Balance Due</th>                                    
-                                    </tr>
-                                </thead>
-                                <tbody>
+                            <table class="table table-sm table-bordered">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Transaction#</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Customer Name</th>
+                                    <th>Age</th>
+                                    <th>Amount</th>
+                                    <th>Balance Due</th>                                    
+                                </tr>
+                                <tbody class="invoice-tbody">
                                     @php
                                         $grand_total_invoice=0;
                                         $grand_total_credit=0;
@@ -144,160 +139,180 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                                         $day5='>60 Days';
                                     @endphp
                                     
-                                    @foreach($invoices as $invoice)
-                                        @if ( $invoice->due_date >= $day_1st2 && $invoice->due_date <= $day_1st1)
+                                
+                               @foreach($invoices as $invoice)
+                                    
+                               @if ( $invoice->due_date >= $day_1st2 && $invoice->due_date <= $day_1st1)
+                               
+                                @if ($day1!='')
+                                    <tr> 
+                                        <td colspan="8" class="text-left"> <b> {{ $day1}} </b></td>
+                                    </tr>
+                                    @php
+                                        $day1='';
+                                    @endphp
+                                @endif
+
+                               <tr>
+                                <td>{{ $invoice->date }}</td>
+                                <td>{{ $invoice->invoice_no }}</td>
+                                <td>{{ 'Invoice' }}</td>
+                                <td>{{ 'Sent' }}</td>
+                                <td>{{ isset($invoice->partyInfo($invoice->customer_name)->pi_name)? $invoice->partyInfo($invoice->customer_name)->pi_name : '' }}</td>
+                                <td>
+                                    @php
                                         
-                                            @if ($day1!='')
-                                                <tr> 
-                                                    <td colspan="8" class="text-left"> <b> {{ $day1}} </b></td>
-                                                </tr>
-                                                @php
-                                                    $day1='';
-                                                @endphp
-                                            @endif
+                                        $date = \Carbon\Carbon::parse($invoice->due_date);
+                                        $now = \Carbon\Carbon::now();
+                                        echo $diff = $date->diffInDays($now).' Days';
 
-                                            <tr>
-                                                <td>{{ $invoice->date }}</td>
-                                                <td>{{ $invoice->invoice_no }}</td>
-                                                <td>{{ 'Invoice' }}</td>
-                                                <td>{{ 'Sent' }}</td>
-                                                <td>{{ isset($invoice->partyInfo($invoice->customer_name)->pi_name)? $invoice->partyInfo($invoice->customer_name)->pi_name : '' }}</td>
-                                                <td>
-                                                    @php
-                                                        
-                                                        $date = \Carbon\Carbon::parse($invoice->due_date);
-                                                        $now = \Carbon\Carbon::now();
-                                                        echo $diff = $date->diffInDays($now).' Days';
+                                    @endphp
+                                </td>
+                                <td class="text-right">{{ $invoice->grand_total }}</td>
+                                <td class="text-right">{{ $invoice->grand_total }}</td>                                
+                                </tr>
+                                
+                                
+                                @elseif($invoice->due_date >= $day_2nd2 && $invoice->due_date <= $day_2nd1)
 
-                                                    @endphp
-                                                </td>
-                                                <td class="text-right">{{ $invoice->grand_total }}</td>
-                                                <td class="text-right">{{ $invoice->grand_total }}</td>                                
-                                            </tr>
-                                        @elseif($invoice->due_date >= $day_2nd2 && $invoice->due_date <= $day_2nd1)
-
-                                            @if ($day2!='')
-                                                <tr> 
-                                                    <td colspan="8" class="text-left"> <b> {{ $day2}} </b></td>
-                                                </tr>
-                                                @php
-                                                    $day2='';
-                                                @endphp
-                                            @endif
-                                            <tr>
-                                                <td>{{ $invoice->date }}</td>
-                                                <td>{{ $invoice->invoice_no }}</td>
-                                                <td>{{ 'Invoice' }}</td>
-                                                <td>{{ 'Sent' }}</td>
-                                                
-                                                <td>{{ isset($invoice->partyInfo($invoice->customer_name)->pi_name)? $invoice->partyInfo($invoice->customer_name)->pi_name : '' }}</td>
-                                                <td>
-                                                    @php
-                                                        
-                                                        $date = \Carbon\Carbon::parse($invoice->due_date);
-                                                        $now = \Carbon\Carbon::now();
-                                                        echo $diff = $date->diffInDays($now).' Days';
-
-                                                    @endphp
-                                                </td>
-                                                <td>{{ $invoice->grand_total }}</td>
-                                                <td>{{ $invoice->grand_total }}</td>                                
-                                            </tr>
-
-                                        @elseif($invoice->due_date >= $day_3rd2 && $invoice->due_date <= $day_3rd1)
-
-                                            @if ($day3!='')
-                                                <tr> 
-                                                    <td colspan="8" class="text-left"> <b> {{ $day3}} </b></td>
-                                                </tr>
-                                                @php
-                                                    $day3='';
-                                                @endphp
-                                            @endif
-
-                                            <tr>
-                                                <td>{{ $invoice->date }}</td>
-                                                <td>{{ $invoice->invoice_no }}</td>
-                                                <td>{{ 'Invoice' }}</td>
-                                                <td>{{ 'Sent' }}</td>
-                                                <td>{{ isset($invoice->partyInfo($invoice->customer_name)->pi_name)? $invoice->partyInfo($invoice->customer_name)->pi_name : '' }}</td>
-                                                <td>
-                                                    @php
-                                                        
-                                                        $date = \Carbon\Carbon::parse($invoice->due_date);
-                                                        $now = \Carbon\Carbon::now();
-                                                        echo $diff = $date->diffInDays($now).' Days';
-
-                                                    @endphp
-                                                </td>
-                                                <td>{{ $invoice->grand_total }}</td>
-                                                <td>{{ $invoice->grand_total }}</td>                                
-                                            </tr>
-
-                                        @elseif($invoice->due_date >= $day_4th2 && $invoice->due_date <= $day_4th1)
-
-                                            @if ($day4!='')
-                                                <tr> 
-                                                    <td colspan="8" class="text-left"> <b> {{ $day4}} </b></td>
-                                                </tr>
-                                                @php
-                                                    $day4='';
-                                                @endphp
-                                            @endif
-
-                                            <tr>
-                                                <td>{{ $invoice->date }}</td>
-                                                <td>{{ $invoice->invoice_no }}</td>
-                                                <td>{{ 'Invoice' }}</td>
-                                                <td>{{ 'Sent' }}</td>
-                                                <td>{{ isset($invoice->partyInfo($invoice->customer_name)->pi_name)? $invoice->partyInfo($invoice->customer_name)->pi_name : '' }}</td>
-                                                <td>
-                                                    @php
-                                                        
-                                                        $date = \Carbon\Carbon::parse($invoice->due_date);
-                                                        $now = \Carbon\Carbon::now();
-                                                        echo $diff = $date->diffInDays($now).' Days';
-
-                                                    @endphp
-                                                </td>
-                                                <td>{{ $invoice->grand_total }}</td>
-                                                <td>{{ $invoice->grand_total }}</td>                                
-                                            </tr>
-
-                                        @elseif($invoice->due_date <= $day_5th)
-
-                                        @if ($day5!='')
-                                            <tr> 
-                                                <td colspan="8" class="text-left"> <b> {{ $day5}} </b></td>
-                                            </tr>
-                                            @php
-                                                $day5='';
-                                            @endphp
-                                        @endif
-
-                                        <tr>
-                                            <td>{{ $invoice->date }}</td>
-                                            <td>{{ $invoice->invoice_no }}</td>
-                                            <td>{{ 'Invoice' }}</td>
-                                            <td>{{ 'Sent' }}</td>
-                                            <td>{{ isset($invoice->partyInfo($invoice->customer_name)->pi_name)? $invoice->partyInfo($invoice->customer_name)->pi_name : '' }}</td>
-                                            <td>
-                                                @php
-                                                    
-                                                    $date = \Carbon\Carbon::parse($invoice->due_date);
-                                                    $now = \Carbon\Carbon::now();
-                                                    echo $diff = $date->diffInDays($now).' Days';
-
-                                                @endphp
-                                            </td>
-                                            <td>{{ $invoice->grand_total }}</td>
-                                            <td>{{ $invoice->grand_total }}</td>                                
+                                    @if ($day2!='')
+                                        <tr> 
+                                            <td colspan="8" class="text-left"> <b> {{ $day2}} </b></td>
                                         </tr>
-                                        @else
+                                        @php
+                                            $day2='';
+                                        @endphp
+                                    @endif
 
-                                        @endif
-                                    @endforeach
+                                <tr>
+                                    <td>{{ $invoice->date }}</td>
+                                    <td>{{ $invoice->invoice_no }}</td>
+                                    <td>{{ 'Invoice' }}</td>
+                                    <td>{{ 'Sent' }}</td>
+                                    
+                                    <td>{{ isset($invoice->partyInfo($invoice->customer_name)->pi_name)? $invoice->partyInfo($invoice->customer_name)->pi_name : '' }}</td>
+                                    <td>
+                                        @php
+                                            
+                                            $date = \Carbon\Carbon::parse($invoice->due_date);
+                                            $now = \Carbon\Carbon::now();
+                                            echo $diff = $date->diffInDays($now).' Days';
+
+                                        @endphp
+                                    </td>
+                                    <td>{{ $invoice->grand_total }}</td>
+                                    <td>{{ $invoice->grand_total }}</td>                                
+                                    </tr>
+
+                                @elseif($invoice->due_date >= $day_3rd2 && $invoice->due_date <= $day_3rd1)
+
+                                    @if ($day3!='')
+                                        <tr> 
+                                            <td colspan="8" class="text-left"> <b> {{ $day3}} </b></td>
+                                        </tr>
+                                        @php
+                                            $day3='';
+                                        @endphp
+                                    @endif
+
+                                <tr>
+                                    <td>{{ $invoice->date }}</td>
+                                    <td>{{ $invoice->invoice_no }}</td>
+                                    <td>{{ 'Invoice' }}</td>
+                                    <td>{{ 'Sent' }}</td>
+                                    <td>{{ isset($invoice->partyInfo($invoice->customer_name)->pi_name)? $invoice->partyInfo($invoice->customer_name)->pi_name : '' }}</td>
+                                    <td>
+                                        @php
+                                            
+                                            $date = \Carbon\Carbon::parse($invoice->due_date);
+                                            $now = \Carbon\Carbon::now();
+                                            echo $diff = $date->diffInDays($now).' Days';
+
+                                        @endphp
+                                    </td>
+                                    <td>{{ $invoice->grand_total }}</td>
+                                    <td>{{ $invoice->grand_total }}</td>                                
+                                </tr>
+
+                                @elseif($invoice->due_date >= $day_4th2 && $invoice->due_date <= $day_4th1)
+
+                                    @if ($day4!='')
+                                        <tr> 
+                                            <td colspan="8" class="text-left"> <b> {{ $day4}} </b></td>
+                                        </tr>
+                                        @php
+                                            $day4='';
+                                        @endphp
+                                    @endif
+
+                                <tr>
+                                    <td>{{ $invoice->date }}</td>
+                                    <td>{{ $invoice->invoice_no }}</td>
+                                    <td>{{ 'Invoice' }}</td>
+                                    <td>{{ 'Sent' }}</td>
+                                    <td>{{ isset($invoice->partyInfo($invoice->customer_name)->pi_name)? $invoice->partyInfo($invoice->customer_name)->pi_name : '' }}</td>
+                                    <td>
+                                        @php
+                                            
+                                            $date = \Carbon\Carbon::parse($invoice->due_date);
+                                            $now = \Carbon\Carbon::now();
+                                            echo $diff = $date->diffInDays($now).' Days';
+
+                                        @endphp
+                                    </td>
+                                    <td>{{ $invoice->grand_total }}</td>
+                                    <td>{{ $invoice->grand_total }}</td>                                
+                                </tr>
+
+                                @elseif($invoice->due_date <= $day_5th)
+
+                                    @if ($day5!='')
+                                        <tr> 
+                                            <td colspan="8" class="text-left"> <b> {{ $day5}} </b></td>
+                                        </tr>
+                                        @php
+                                            $day5='';
+                                        @endphp
+                                    @endif
+
+                                <tr>
+                                    <td>{{ $invoice->date }}</td>
+                                    <td>{{ $invoice->invoice_no }}</td>
+                                    <td>{{ 'Invoice' }}</td>
+                                    <td>{{ 'Sent' }}</td>
+                                    <td>{{ isset($invoice->partyInfo($invoice->customer_name)->pi_name)? $invoice->partyInfo($invoice->customer_name)->pi_name : '' }}</td>
+                                    <td>
+                                        @php
+                                            
+                                            $date = \Carbon\Carbon::parse($invoice->due_date);
+                                            $now = \Carbon\Carbon::now();
+                                            echo $diff = $date->diffInDays($now).' Days';
+
+                                        @endphp
+                                    </td>
+                                    <td>{{ $invoice->grand_total }}</td>
+                                    <td>{{ $invoice->grand_total }}</td>                                
+                                </tr>
+                                @else
+
+
+                                @endif
+                               
+
+                               
+
+
+                                    
+                                @endforeach
+                                {{-- <tr>
+                                    <td colspan="2" style="text-center">Grand Total</td>
+                                    <td>{{ number_format((float)$grand_total_invoice,'2','.','')}}</td>
+                                    <td>{{ number_format((float)$grand_total_credit,'2','.','')}}</td>
+                                    <td>{{ number_format((float)$grand_total_balance,'2','.','')}}</td>
+
+                                </tr> --}}
                                 </tbody>
+
 
                             </table>
                         </div>
@@ -305,12 +320,15 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
 
                 </section>
                 <!-- Widgets Statistics End -->
+
+
+
             </div>
         </div>
     </div>
     <!-- END: Content-->
     
-    <div class="modal fade bd-example-modal-lg" id="projectViewModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"  aria-hidden="true">
+    <div class="modal fade bd-example-modal-lg" id="projectViewModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="min-width: 90% !important;">
             <div class="modal-content">
                 <div id="projectViewDetails">
@@ -362,6 +380,7 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                 });
             });
 
+
             $(document).on("click", ".invoice-details", function(e) { 
                 e.preventDefault();
                 
@@ -381,6 +400,7 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                     }
                 });
             });
+
 
             $('#filter').change(function() {
 
@@ -416,4 +436,6 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
             });
         });
     </script>
+
+
 @endpush
