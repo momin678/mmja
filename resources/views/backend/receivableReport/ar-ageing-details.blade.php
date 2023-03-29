@@ -7,32 +7,22 @@ $company_email= \App\Setting::where('config_name', 'company_email')->first();
 $currency= \App\Setting::where('config_name', 'currency')->first();
 
 @endphp
-@section('title', 'Customer Balance')
+@section('title', 'AR Ageing Details By Invoice Due Date')
 @push('css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css" rel="stylesheet" />
     <style>
-        th{
-            /* text-transform: uppercase; */
-            font-size: 11px !important;
+        table td+td+td+td+td+td{
+            text-align: right;
         }
+        .custom-border td{
+            border-right: 1px solid #f2f4f4 !important;
+        }
+        tr td:last-child {
+            border-right:1px solid #dfe3e7 !important;
+      }
     </style>
 @endpush
-<style>
-    @media(min-width: 992px){
-        .modal-lg{
-            
-        }
-    }
-    @media print {
-        .menu-accordion{
-            visibility: hidden;
-        }
-    }
-</style>
 @section('content')
-@php
-
-@endphp
     <!-- BEGIN: Content-->
     <div class="app-content content">
         <div class="content-overlay"></div>
@@ -97,23 +87,20 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
 
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <a href="#" class="btn btn-sm btn-info float-right" id="pagePrint">Print</a>
-                            {{-- <button class="btn  btn-info btn-sm float-right mr-1"
-                        onclick="exportTableToCSV('stockPosition-{{ date('d M Y') }}.csv')">Export To CSV</button> --}}
-                        </div>
                         <div class="table-responsive pt-1">
-                            <table class="table table-sm table-bordered">
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Transaction#</th>
-                                    <th>Type</th>
-                                    <th>Status</th>
-                                    <th>Customer Name</th>
-                                    <th>Age</th>
-                                    <th>Amount</th>
-                                    <th>Balance Due</th>                                    
-                                </tr>
+                            <table class="table table-sm table-bordered exprortTable">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Transaction#</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Customer Name</th>
+                                        <th>Age</th>
+                                        <th>Amount</th>
+                                        <th>Balance Due</th>                                    
+                                    </tr>
+                                </thead>
                                 <tbody class="invoice-tbody">
                                     @php
                                         $grand_total_invoice=0;
@@ -145,8 +132,15 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                                @if ( $invoice->due_date >= $day_1st2 && $invoice->due_date <= $day_1st1)
                                
                                 @if ($day1!='')
-                                    <tr> 
-                                        <td colspan="8" class="text-left"> <b> {{ $day1}} </b></td>
+                                    <tr class="custom-border"> 
+                                        <td> <b> {{ $day1}} </b></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
                                     </tr>
                                     @php
                                         $day1='';
@@ -176,8 +170,15 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                                 @elseif($invoice->due_date >= $day_2nd2 && $invoice->due_date <= $day_2nd1)
 
                                     @if ($day2!='')
-                                        <tr> 
-                                            <td colspan="8" class="text-left"> <b> {{ $day2}} </b></td>
+                                        <tr class="custom-border"> 
+                                            <td> <b> {{ $day2}} </b></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
                                         </tr>
                                         @php
                                             $day2='';
@@ -207,8 +208,15 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                                 @elseif($invoice->due_date >= $day_3rd2 && $invoice->due_date <= $day_3rd1)
 
                                     @if ($day3!='')
-                                        <tr> 
-                                            <td colspan="8" class="text-left"> <b> {{ $day3}} </b></td>
+                                        <tr class="custom-border"> 
+                                            <td> <b> {{ $day3}} </b></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
                                         </tr>
                                         @php
                                             $day3='';
@@ -237,8 +245,15 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                                 @elseif($invoice->due_date >= $day_4th2 && $invoice->due_date <= $day_4th1)
 
                                     @if ($day4!='')
-                                        <tr> 
-                                            <td colspan="8" class="text-left"> <b> {{ $day4}} </b></td>
+                                        <tr class="custom-border"> 
+                                            <td> <b> {{ $day4}} </b></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
                                         </tr>
                                         @php
                                             $day4='';
@@ -267,8 +282,15 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                                 @elseif($invoice->due_date <= $day_5th)
 
                                     @if ($day5!='')
-                                        <tr> 
-                                            <td colspan="8" class="text-left"> <b> {{ $day5}} </b></td>
+                                        <tr class="custom-border"> 
+                                            <td> <b> {{ $day5}} </b></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
                                         </tr>
                                         @php
                                             $day5='';
@@ -297,20 +319,8 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
 
 
                                 @endif
-                               
-
-                               
-
-
                                     
                                 @endforeach
-                                {{-- <tr>
-                                    <td colspan="2" style="text-center">Grand Total</td>
-                                    <td>{{ number_format((float)$grand_total_invoice,'2','.','')}}</td>
-                                    <td>{{ number_format((float)$grand_total_credit,'2','.','')}}</td>
-                                    <td>{{ number_format((float)$grand_total_balance,'2','.','')}}</td>
-
-                                </tr> --}}
                                 </tbody>
 
 

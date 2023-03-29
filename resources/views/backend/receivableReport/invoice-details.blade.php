@@ -2,6 +2,10 @@
 @push('css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css" rel="stylesheet" />
 @endpush
+@php
+    $company_name= \App\Setting::where('config_name', 'company_name')->first();
+@endphp
+@section('title', 'Invoice Details')
 @section('content')
 @include('layouts.backend.partial.style')
     <!-- BEGIN: Content-->
@@ -13,15 +17,16 @@
             <div>
                 <section id="widgets-Statistics" class="mr-1 ml-1 mb-1">
                     <div class="row">
-                        <div class="col-md-6  mt-2">
-                            <h4>Invoice Details </h4>
-                        </div>
-                        <div class="col-md-6  mt-2 text-right">
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-                                Fitter
-                              </button>
+                        <div class="col-md-12 text-center mt-2">
+                            <h4>{{ $company_name->config_value}}</h4>
+                            <h6> Invoice Details</h6>
                         </div>
                     </div>
+                    {{-- <div class="d-flex flex-row-reverse">
+                        <a href="#" class="btn btn-primary mr-1" data-toggle="modal" data-target="#exampleModalCenter">Fitter</a>
+                        <a href="{{route('invoice-list-excel-download')}}" class="btn btn-info mr-1">Excel</a>
+                        <a href="{{route('invoice-list-pdf-download')}}" class="btn btn-light mr-1">PDF Download</a>
+                    </div> --}}
                 </section>
 
                 <section class="mr-1 ml-1">
@@ -38,7 +43,7 @@
                             </div>
                         </div> --}}
                         <div class="cardStyleChange">
-                            <table class="table mb-0 table-sm table-hover">
+                            <table class="table mb-0 table-sm table-hover exprortTable">
                                 <thead  class="thead-light">
                                     <tr style="height: 50px;">
                                         <th>Status</th>
@@ -150,7 +155,6 @@
           e.preventDefault();
           
           var id= $(this).attr('id');
-        //   alert(id);
           $.ajax({
               url: "{{URL('invoice-view-modal')}}",
               method: "POST",
@@ -164,6 +168,6 @@
                   $('#invoice-modal').modal('show');
               }
           });
-      });
+        });
     </script>
 @endpush

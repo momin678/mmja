@@ -7,30 +7,11 @@ $company_email= \App\Setting::where('config_name', 'company_email')->first();
 $currency= \App\Setting::where('config_name', 'currency')->first();
 
 @endphp
-@section('title', 'Customer Balance')
+@section('title', 'Receivable Summary')
 @push('css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css" rel="stylesheet" />
-    <style>
-        td{
-            text-align: right !important;
-        }
-        th{
-            /* text-transform: uppercase; */
-            font-size: 11px !important;
-        }
-    </style>
 @endpush
-<style>
-    @media(min-width: 992px){
-        .modal-lg{
-            
-        }
-    }
-</style>
 @section('content')
-@php
-
-@endphp
     <!-- BEGIN: Content-->
     <div class="app-content content">
         <div class="content-overlay"></div>
@@ -44,120 +25,48 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                             <h5>{{ $company_name->config_value}}</h5>
                             <h4> Receivable Summary</h4>
                         </div>
-
-                        {{-- <div class="col-md-2 text-right  col-left-padding">
-                            <form action="{{ route('searchinvoiceWIseDate') }}" method="GET">
-                                
-                                <div class="row form-group  col-left-padding">
-                                    <input type="text" class="form-control col-9 " name="date"
-                                        placeholder="Select Date" value="{{ isset($searchDate)? $searchDate:"" }}" onfocus="(this.type='date')" id="date" required>
-                                    <button class="bx bx-search col-3 btn-warning btn-block" type="submit"></button>
-                                </div>
-                            </form>
-                            <input type="hidden" name="hidden_date" value="{{ isset($date)? $date:"" }}" id="hidden_date">
-
-                        </div>
-                        <div class="col-md-4  col-left-padding">
-                            <form action="{{ route('searchinvoiceWIseRange') }}" method="GET">
-                                
-                                <div class="row form-group">
-                                    <div class="col-5 col-right-padding">
-                                        <input type="text" class="form-control" name="from"
-                                        placeholder="From"  value="{{ isset($searchDatefrom)? $searchDatefrom:"" }}"  onfocus="(this.type='date')"  id="from" required>
-
-                                    </div>
-                                    <div class="col-5  col-left-padding col-right-padding">
-                                        <input type="text" class="form-control" name="to"
-                                        placeholder="To" value="{{ isset($searchDateto)? $searchDateto:"" }}" onfocus="(this.type='date')" id="to" required>
-                                    </div>
-                                    <button class="bx bx-search col-2 btn-warning btn-block" type="submit"></button>
-                                </div>
-                            </form>
-
-                            <input type="hidden" name="hidden_date_from" value="{{ isset($from)? $from:"" }}" id="hidden_date_from">
-                            <input type="hidden" name="hidden_date_to" value="{{ isset($to)? $to:"" }}" id="hidden_date_to">
-                        </div> --}}
-                        
                     </div>
-
-
-
-                    <div class="row pt-2 d-flex justify-content-end">
-                        <div class="col-6">
-                            <div style="width: 40%">
-                                {{-- <select name="filter" id="filter" class="form-control">
-                                    <option value="">Filter...</option>
-                                    @foreach (App\PayMode::get() as $mode )
-                                    <option value="{{ $mode->title }}">{{ $mode->title }}</option>
-
-                                    @endforeach
-                                </select> --}}
-
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            @if(isset($date))
-                            <a href="{{ route('invoiceWiseDailySalePrintDate',$date) }}" class="btn btn-sm btn-info float-right"
-                            target="_blank">Print</a>
-                            @elseif (isset($searchDatefrom))
-                            <a href="{{ route('invoiceWiseDailySalePrintRange',['from'=>$from,'to'=>$to]) }}" class="btn btn-sm btn-info float-right"
-                            target="_blank">Print</a>
-                            @else
-                            <a href="{{ route('invoiceWiseDailySalePrint') }}" class="btn btn-sm btn-info float-right"
-                            target="_blank">Print</a>
-                            @endif
-                            {{-- <button class="btn  btn-info btn-sm float-right mr-1"
-                        onclick="exportTableToCSV('stockPosition-{{ date('d M Y') }}.csv')">Export To CSV</button> --}}
-                        </div>
+                    <div class="d-flex flex-row-reverse">
+                        <a href="{{route('receivable-summary-excel-download')}}" class="btn btn-info">Excel</a>
+                        <a href="{{route('receivable-summary-pdf-download')}}" class="btn btn-light mr-1">PDF Download</a>
+                    </div>
+                    <div class="row d-flex justify-content-end">
                         <div class="table-responsive pt-1">
                             <table class="table table-sm table-bordered">
-                                <tr>
-                                    <th>Customer Name</th>
-                                    <th>Date</th>
-                                    <th>Transaction#</th>
-                                    <th>Reference#</th>
-                                    <th>Status</th>
-                                    <th>Transaction Type</th>
-                                    <th>Total</th>
-                                    <th>Balance</th>                                    
-                                </tr>
+                                <thead class="thead-light">
+                                    <tr style="height: 50px;">
+                                        <th>Customer Name</th>
+                                        <th>Date</th>
+                                        <th>Transaction#</th>
+                                        <th>Reference#</th>
+                                        <th>Status</th>
+                                        <th>Transaction Type</th>
+                                        <th>Total</th>
+                                        <th>Balance</th>                                    
+                                    </tr>
+                                <thead/>
                                 <tbody class="invoice-tbody">
                                     @php
                                         $grand_total_invoice=0;
                                         $grand_total_credit=0;
                                         $grand_total_balance=0;
                                     @endphp
-                               @foreach($invoices as $invoice)
-
-                               <tr>
-                                <td>
-                                    @if (isset($invoice->partyInfo($invoice->customer_name)->pi_name))
-                                        <a href="{{ route('receivable-details', $invoice->partyInfo($invoice->customer_name)->id) }}" target="_blank">{{ $invoice->partyInfo($invoice->customer_name)->pi_name }}</a>
-                                    @endif
-                                    
-                                </td>
-                                <td>{{ Carbon\Carbon::parse($invoice->date)->format('d-m-Y') }} </td>
-                                <td>{{ $invoice->invoice_no }}</td>
-                                <td>-</td>
-                                <td>Sent</td>
-                                <td>Invoice</td>
-                                <td>{{ $invoice->grand_total }}</td>
-                                <td>{{ $invoice->grand_total }}</td>
-                                
-                                </tr>
-                                    {{-- @php
-                                        $grand_total_invoice=$grand_total_invoice+$invoice->total_invoice_amount;
-                                        $grand_total_credit=$grand_total_credit+$available_credit;
-                                        $grand_total_balance=$grand_total_balance+$balance;
-                                    @endphp --}}
-                                @endforeach
-                                {{-- <tr>
-                                    <td colspan="2" style="text-center">Grand Total</td>
-                                    <td>{{ number_format((float)$grand_total_invoice,'2','.','')}}</td>
-                                    <td>{{ number_format((float)$grand_total_credit,'2','.','')}}</td>
-                                    <td>{{ number_format((float)$grand_total_balance,'2','.','')}}</td>
-
-                                </tr> --}}
+                                    @foreach($invoices as $invoice)
+                                        <tr>
+                                            <td>
+                                                @if (isset($invoice->partyInfo($invoice->customer_name)->pi_name))
+                                                    <a href="{{ route('receivable-details', $invoice->partyInfo($invoice->customer_name)->id) }}" target="_blank">{{ $invoice->partyInfo($invoice->customer_name)->pi_name }}</a>
+                                                @endif
+                                            </td>
+                                            <td>{{ Carbon\Carbon::parse($invoice->date)->format('d-m-Y') }} </td>
+                                            <td>{{ $invoice->invoice_no }}</td>
+                                            <td>-</td>
+                                            <td>Sent</td>
+                                            <td>Invoice</td>
+                                            <td>{{ $invoice->grand_total }}</td>
+                                            <td>{{ $invoice->grand_total }}</td>
+                                        </tr>
+                                    @endforeach
                                 </tbody>
 
 

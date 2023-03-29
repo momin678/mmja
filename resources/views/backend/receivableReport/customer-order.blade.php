@@ -2,6 +2,10 @@
 @push('css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css" rel="stylesheet" />
 @endpush
+@php
+    $company_name= \App\Setting::where('config_name', 'company_name')->first();
+@endphp
+@section('title', 'Sales Order Details')
 @section('content')
 @include('layouts.backend.partial.style')
     <!-- BEGIN: Content-->
@@ -13,13 +17,9 @@
             <div>
                 <section id="widgets-Statistics" class="mr-1 ml-1 mb-1">
                     <div class="row">
-                        <div class="col-md-6  mt-2">
-                            <h4>Sales Order Details</h4>
-                        </div>
-                        <div class="col-md-6  mt-2 text-right">
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-                                Fitter
-                              </button>
+                        <div class="col-md-12 text-center mt-2">
+                            <h4>{{ $company_name->config_value}}</h4>
+                            <h6> Sales Order Details</h6>
                         </div>
                     </div>
                 </section>
@@ -38,7 +38,7 @@
                             </div>
                         </div> --}}
                         <div class="cardStyleChange">
-                            <table class="table mb-0 table-sm table-hover">
+                            <table class="table mb-0 table-sm table-hover customerExprortTable">
                                 <thead  class="thead-light">
                                     <tr style="height: 50px;">
                                         <th>Status</th>
@@ -87,7 +87,7 @@
     <div class="modal fade bd-example-modal-lg" id="invoice-modal" tabindex="-1" rrole="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="min-width: 90% !important;">
           <div class="modal-content">
-            <section class="print-hideen border-bottom p-1">
+            <section class="print-hideen border-bottom">
                 <div class="d-flex flex-row-reverse">
                     <div class="mIconStyleChange"><a href="#" class="close btn-icon btn btn-danger" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class='bx bx-x'></i></span></a></div>
                 </div>
@@ -164,5 +164,34 @@
               }
           });
       });
+      $(document).ready(function() {
+            $('.customerExprortTable').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        text: 'Filter',
+                        action: function ( e, dt, node, config ) {
+                            $('#exampleModalCenter').modal('show');
+                        }
+                    },
+                    {
+                        text: 'Print',
+                        action: function ( e, dt, node, config ) {
+                            window.print();
+                        }
+                    },
+                    {
+                        extend: 'pdf',
+                    },
+                    {
+                        extend: 'excel',
+                    }
+                ],
+                paging: false,
+                info: false,
+                searching: false,
+                ordering: false,
+            });
+        } );
     </script>
 @endpush

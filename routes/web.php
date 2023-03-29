@@ -594,8 +594,11 @@ Route::get('vbd-excel-download/{id}', 'backend\AccountsReportController@vbd_exce
 Route::post('purchase-order-by-vendor-details', 'backend\AccountsReportController@purchase_order_by_vendor_details')->name('purchase-order-by-vendor-details');
 Route::get('pov-pdf-download/{id}', 'backend\AccountsReportController@pov_pdf_download')->name('pov-pdf-download');
 Route::get('pov-excel-download/{id}', 'backend\AccountsReportController@pov_excel_download')->name('pov-excel-download');
-
-
+// 23/3/23
+Route::get('customer-balance-excel-download', 'backend\AccountsReportController@customer_balance_excel_download')->name('customer-balance-excel-download');
+Route::get('customer-balance-pdf-download', 'backend\AccountsReportController@customer_balance_pdf_download')->name('customer-balance-pdf-download');
+Route::get('receivable-summary-excel-download', 'backend\AccountsReportController@receivable_summary_excel_download')->name('receivable-summary-excel-download');
+Route::get('receivable-summary-pdf-download', 'backend\AccountsReportController@receivable_summary_pdf_download')->name('receivable-summary-pdf-download');
 // Tarek Accounting Report
 //payable
 Route::get('ap-ageing-summary', 'backend\PayableReportController@ap_ageing_summary')->name('ap-ageing-summary');
