@@ -364,7 +364,7 @@
                         <li class="{{ Request::is('vendor-debit-details*') ? 'active' : ''}}">
                             <a class="d-flex align-items-center" href="{{route('vendor-debit-details')}}">
                                 <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item text-truncate" data-i18n="Vendor Debit Details">Vendor Debit Details</span>
+                                <span class="menu-item text-truncate" data-i18n="Vendor Debit Details">Vendor Credit Details</span>
                             </a>
                         </li>
                         <li class="{{ Request::is('purchase-order-details*') ? 'active' : ''}}">

@@ -37,6 +37,7 @@
                                     <tr style="height: 50px;">
                                         <th>Vendor name</th>
                                         <th class="text-right pl-2">Bill Balance (FCY)</th>
+                                        <th class="text-right pl-2">EXCESS Payment (FCY)</th>
                                         <th class="text-right pl-2">Payment (FCY)</th>
                                         <th class="text-right pl-2">Balance (FCY)</th>
                                     </tr>
@@ -56,6 +57,13 @@
                                                 <a href="#" class="vendor-balances-details" id="{{$customer->id}}"> {{ $customer->pi_name }} </a>
                                             </td>
                                             <td class="text-right pl-2"><small>(AED)</small> {{ $amount }}</td>
+                                            <td class="text-right pl-2"><small>(AED)</small> 
+                                                @if ($paid_amount>$amount)
+                                                {{ number_format($paid_amount-$amount,2) }}
+                                                @else
+                                                    0.00
+                                                @endif
+                                            </td>
                                             <td class="text-right pl-2"><small>(AED)</small> {{$paid_amount}}</td>
                                             <td class="text-right pl-2"><small>(AED)</small> {{$amount-$paid_amount}}</td>
                                         </tr>

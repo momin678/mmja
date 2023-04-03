@@ -7,30 +7,10 @@ $company_email= \App\Setting::where('config_name', 'company_email')->first();
 $currency= \App\Setting::where('config_name', 'currency')->first();
 
 @endphp
-@section('title', 'Customer Balance')
-@push('css')
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css" rel="stylesheet" />
-    <style>
-        td{
-            text-align: right !important;
-        }
-        th{
-            /* text-transform: uppercase; */
-            font-size: 11px !important;
-        }
-    </style>
-@endpush
-<style>
-    @media(min-width: 992px){
-        .modal-lg{
+@section('title', 'AP Ageing Summary By Invoice Due Date')
 
-        }
-    }
-</style>
 @section('content')
-@php
-
-@endphp
+@include('layouts.backend.partial.style')
     <!-- BEGIN: Content-->
     <div class="app-content content">
         <div class="content-overlay"></div>
@@ -95,59 +75,47 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
 
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            @if(isset($date))
-                            <a href="{{ route('invoiceWiseDailySalePrintDate',$date) }}" class="btn btn-sm btn-info float-right"
-                            target="_blank">Print</a>
-                            @elseif (isset($searchDatefrom))
-                            <a href="{{ route('invoiceWiseDailySalePrintRange',['from'=>$from,'to'=>$to]) }}" class="btn btn-sm btn-info float-right"
-                            target="_blank">Print</a>
-                            @else
-                            <a href="{{ route('invoiceWiseDailySalePrint') }}" class="btn btn-sm btn-info float-right"
-                            target="_blank">Print</a>
-                            @endif
-                            {{-- <button class="btn  btn-info btn-sm float-right mr-1"
-                        onclick="exportTableToCSV('stockPosition-{{ date('d M Y') }}.csv')">Export To CSV</button> --}}
-                        </div>
                         <div class="table-responsive pt-1">
-                            <table class="table table-sm table-bordered">
-                                <tr>
-                                    <th>Customer Name</th>
-                                    <th>Current</th>
-                                    <th>1-15 Days</th>
-                                    <th>16-30 Days</th>
-                                    <th>31-45 Days</th>
-                                    <th>46-60 Days</th>
-                                    <th>>60 Days</th>
-                                    <th>Total</th>
-                                </tr>
+                            <table class="table table-sm table-hover exprortTable">
+                                <thead class="thead-light">
+                                    <tr style="height: 50px; border-top: 1px solid;">
+                                        <th>Customer Name</th>
+                                        <th>Current</th>
+                                        <th>1-15 Days</th>
+                                        <th>16-30 Days</th>
+                                        <th>31-45 Days</th>
+                                        <th>46-60 Days</th>
+                                        <th>>60 Days</th>
+                                        <th>Total</th>
+                                    </tr>
+                                </thead>
                                 <tbody class="invoice-tbody">
 
                                @foreach($parties as $party)
 
-                               <tr>
-                                <td>
-                                    <a href="{{ route('ap-ageing-summary-one', $party->id) }}" target="_blank">{{ $party->pi_name }}</a>
-                                </td>
-                                <td>{{ $party->currentAP() }}</td>
-                                <td>{{ $party->ap(1,15) }}</td>
-                                <td>{{  $party->ap(16,30) }}</td>
-                                <td>{{  $party->ap(31,45) }}</td>
-                                <td>{{  $party->ap(46,60) }}</td>
-                                <td>{{ $party->days_up(60) }}</td>
-                                <td>{{ $party->apTotal() }}</td>
-                                {{-- <td>
-                                    <a href="#" class="btn customer-details" id="{{ $party->customer_name}}"> {{ $party->partyInfo($party->customer_name)->pi_name }}</a>
-                                </td>
-                                <td>{{ $party->total_invoice_amount }}</td>
-                                <td>{{ $available_credit= ($party->partyInfo($party->customer_name)->credit_limit -  $party->total_invoice_amount) }}</td>
-                                <td>{{ $balance= $party->total_invoice_amount - $available_credit }}</td>                                --}}
-                                </tr>
-                                    {{-- @php
-                                        $grand_total_invoice=$grand_total_invoice+$party->total_invoice_amount;
-                                        $grand_total_credit=$grand_total_credit+$available_credit;
-                                        $grand_total_balance=$grand_total_balance+$balance;
-                                    @endphp --}}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ route('ap-ageing-summary-one', $party->id) }}" target="_blank">{{ $party->pi_name }}</a>
+                                        </td>
+                                        <td class="text-right">{{ $party->currentAP() }}</td>
+                                        <td class="text-right">{{ $party->ap(1,15) }}</td>
+                                        <td class="text-right">{{  $party->ap(16,30) }}</td>
+                                        <td class="text-right">{{  $party->ap(31,45) }}</td>
+                                        <td class="text-right">{{  $party->ap(46,60) }}</td>
+                                        <td class="text-right">{{ $party->days_up(60) }}</td>
+                                        <td class="text-right">{{ $party->apTotal() }}</td>
+                                        {{-- <td>
+                                            <a href="#" class="btn customer-details" id="{{ $party->customer_name}}"> {{ $party->partyInfo($party->customer_name)->pi_name }}</a>
+                                        </td>
+                                        <td>{{ $party->total_invoice_amount }}</td>
+                                        <td>{{ $available_credit= ($party->partyInfo($party->customer_name)->credit_limit -  $party->total_invoice_amount) }}</td>
+                                        <td>{{ $balance= $party->total_invoice_amount - $available_credit }}</td>                                --}}
+                                    </tr>
+                                        {{-- @php
+                                            $grand_total_invoice=$grand_total_invoice+$party->total_invoice_amount;
+                                            $grand_total_credit=$grand_total_credit+$available_credit;
+                                            $grand_total_balance=$grand_total_balance+$balance;
+                                        @endphp --}}
                                 @endforeach
                                 {{-- <tr>
                                     <td colspan="2" style="text-center">Grand Total</td>

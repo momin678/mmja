@@ -7,26 +7,7 @@ $company_email= \App\Setting::where('config_name', 'company_email')->first();
 $currency= \App\Setting::where('config_name', 'currency')->first();
 
 @endphp
-@section('title', 'Customer Balance')
-@push('css')
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css" rel="stylesheet" />
-    <style>
-        td{
-            text-align: right !important;
-        }
-        th{
-            /* text-transform: uppercase; */
-            font-size: 11px !important;
-        }
-    </style>
-@endpush
-<style>
-    @media(min-width: 992px){
-        .modal-lg{
-
-        }
-    }
-</style>
+@section('title', 'AP Ageing Details By Invoice Due Date')
 @section('content')
 @php
 
@@ -95,63 +76,62 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
 
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            @if(isset($date))
-                            <a href="{{ route('invoiceWiseDailySalePrintDate',$date) }}" class="btn btn-sm btn-info float-right"
-                            target="_blank">Print</a>
-                            @elseif (isset($searchDatefrom))
-                            <a href="{{ route('invoiceWiseDailySalePrintRange',['from'=>$from,'to'=>$to]) }}" class="btn btn-sm btn-info float-right"
-                            target="_blank">Print</a>
-                            @else
-                            <a href="{{ route('invoiceWiseDailySalePrint') }}" class="btn btn-sm btn-info float-right"
-                            target="_blank">Print</a>
-                            @endif
-                            {{-- <button class="btn  btn-info btn-sm float-right mr-1"
-                        onclick="exportTableToCSV('stockPosition-{{ date('d M Y') }}.csv')">Export To CSV</button> --}}
-                        </div>
                         <div class="table-responsive pt-1">
-                            <table class="table table-sm table-bordered">
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Transaction#</th>
-                                    <th>Type</th>
-                                    <th>Status</th>
-                                    <th>Supplier Name</th>
-                                    <th>Age</th>
-                                    <th>Amount</th>
-                                    <th>Balance Due</th>
-                                </tr>
+                            <table class="table table-sm table-hover exprortTable">
+                                <thead class="thead-light">
+                                    <tr style="height: 50px; border-top: 1px solid;">
+                                        <th>Date</th>
+                                        <th>Transaction#</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Vendor Name</th>
+                                        <th>Age</th>
+                                        <th>Amount</th>
+                                        <th>Balance Due</th>
+                                    </tr>
+                                </thead>
                                 <tbody class="invoice-tbody">
 
+                                    <tr>
+                                        <td class="text-left"> <b> 1-15 Days </b></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    @foreach($purchase_1 as $purch)
+                                    <tr>
+                                        <td>{{ $purch->date }}</td>
+                                        <td>{{ $purch->purchase_no }}</td>
+                                        <td>{{ 'Purchase' }}</td>
+                                        <td>{{ 'Receive' }}</td>
+                                        <td>{{$purch->partInfo->pi_name }}</td>
+                                        <td>
+                                            @php
+
+                                                $date = \Carbon\Carbon::parse($purch->pay_date);
+                                                $now = \Carbon\Carbon::now();
+                                                echo $diff = $date->diffInDays($now).' Days';
+
+                                            @endphp
+                                        </td>
+                                        <td>{{ $purch->grand_total }}</td>
+                                        <td>{{ $purch->grand_total }}</td>
+                                    </tr>
+                                    @endforeach
 
                                 <tr>
-                                    <td colspan="8" class="text-left"> <b> 1-15 Days </b></td>
-                                </tr>
-                               @foreach($purchase_1 as $purch)
-
-
-                               <tr>
-                                <td>{{ $purch->date }}</td>
-                                <td>{{ $purch->purchase_no }}</td>
-                                <td>{{ 'Purchase' }}</td>
-                                <td>{{ 'Receive' }}</td>
-                                <td>{{$purch->partInfo->pi_name }}</td>
-                                <td>
-                                    @php
-
-                                        $date = \Carbon\Carbon::parse($purch->pay_date);
-                                        $now = \Carbon\Carbon::now();
-                                        echo $diff = $date->diffInDays($now).' Days';
-
-                                    @endphp
-                                </td>
-                                <td>{{ $purch->grand_total }}</td>
-                                <td>{{ $purch->grand_total }}</td>
-                                </tr>
-                                @endforeach
-
-                                <tr>
-                                    <td colspan="8" class="text-left"> <b> 16-30 Days </b></td>
+                                    <td class="text-left"> <b> 16-30 Days </b></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>        
                                 </tr>
                                @foreach($purchase_2 as $purch)
 
@@ -177,7 +157,14 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                                 @endforeach
 
                                 <tr>
-                                    <td colspan="8" class="text-left"> <b> 31-45 Days </b></td>
+                                    <td class="text-left"> <b> 31-45 Days </b></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                                @foreach($purchase_3 as $purch)
 
@@ -203,7 +190,14 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                                 @endforeach
 
                                 <tr>
-                                    <td colspan="8" class="text-left"> <b> 45-60 Days </b></td>
+                                    <td class="text-left"> <b> 45-60 Days </b></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                                @foreach($purchase_4 as $purch)
 
@@ -229,7 +223,14 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                                 @endforeach
 
                                 <tr>
-                                    <td colspan="8" class="text-left"> <b> >60 Days </b></td>
+                                    <td class="text-left"> <b> >60 Days </b></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
                                @foreach($purchase_5 as $purch)
 
