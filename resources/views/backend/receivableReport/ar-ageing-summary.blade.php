@@ -7,7 +7,7 @@ $company_email= \App\Setting::where('config_name', 'company_email')->first();
 $currency= \App\Setting::where('config_name', 'currency')->first();
 
 @endphp
-@section('title', 'AR Ageing Summary By Invoice Due Date')
+@section('title', 'Customer Balance')
 @push('css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css" rel="stylesheet" />
     <style>
@@ -101,20 +101,23 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
 
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <a href="#" class="btn btn-sm btn-info float-right" id="pagePrint">Print</a>
+                            {{-- <button class="btn  btn-info btn-sm float-right mr-1"
+                        onclick="exportTableToCSV('stockPosition-{{ date('d M Y') }}.csv')">Export To CSV</button> --}}
+                        </div>
                         <div class="table-responsive pt-1">
-                            <table class="table table-sm table-bordered exprortTable">
-                                <thead>
-                                    <tr>
-                                        <th>Customer Name</th>
-                                        <th>Current</th>
-                                        <th>1-15 Days</th>
-                                        <th>16-30 Days</th>
-                                        <th>31-45 Days</th>
-                                        <th>46-60 Days</th>
-                                        <th>>60 Days</th>
-                                        <th>Total</th>                                    
-                                    </tr>
-                                </thead>
+                            <table class="table table-sm table-bordered">
+                                <tr>
+                                    <th>Customer Name</th>
+                                    <th>Current</th>
+                                    <th>1-15 Days</th>
+                                    <th>16-30 Days</th>
+                                    <th>31-45 Days</th>
+                                    <th>46-60 Days</th>
+                                    <th>>60 Days</th>
+                                    <th>Total</th>                                    
+                                </tr>
                                 <tbody class="invoice-tbody">
                                     @php
                                         $grand_total_invoice=0;

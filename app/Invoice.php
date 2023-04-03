@@ -79,8 +79,5 @@ class Invoice extends Model
     {
         return $this->hasMany(InvoiceItem::class,'invoice_id')->sum('cost_price');
     }
-    public function customer_name(){
-        return $this->belongsTo(PartyInfo::class, 'customer_name', 'pi_code');
-    }
 
 }

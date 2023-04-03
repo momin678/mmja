@@ -261,7 +261,7 @@
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Invoice Details</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('item-purchase*') || Request::is("po-generation-approval-list") || Request::is("po-generation-approval-details") ? 'active' : ''}}">
+                        <li class="{{ Request::is('retainer-invoice-details') ? 'active' : ''}}">
                             <a class="d-flex align-items-center" href="#">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Retainer Invoice Details</span>
@@ -273,13 +273,13 @@
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Sales Order Details</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('item-purchase*') || Request::is("po-generation-approval-list") || Request::is("po-generation-approval-details") ? 'active' : ''}}">
+                        <li class="{{ Request::is('delivery-challan') ? 'active' : ''}}">
                             <a class="d-flex align-items-center" href="#">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Delivery Challan Details</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('item-purchase*') || Request::is("po-generation-approval-list") || Request::is("po-generation-approval-details") ? 'active' : ''}}">
+                        <li class="{{ Request::is('estimate-details') ? 'active' : ''}}">
                             <a class="d-flex align-items-center" href="#">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Estimate Details</span>
@@ -297,13 +297,13 @@
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Receivable Summary</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('item-purchase*') || Request::is("po-generation-approval-list") || Request::is("po-generation-approval-details") ? 'active' : ''}}">
+                        <li class="{{ Request::is('receivables-details') ? 'active' : ''}}">
                             <a class="d-flex align-items-center" href="#">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Receivables Details</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('item-purchase*') || Request::is("po-generation-approval-list") || Request::is("po-generation-approval-details") ? 'active' : ''}}">
+                        <li class="{{ Request::is('sales-return-details') ? 'active' : ''}}">
                             <a class="d-flex align-items-center" href="#">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Sales Return Details</span>
@@ -364,7 +364,7 @@
                         <li class="{{ Request::is('vendor-debit-details*') ? 'active' : ''}}">
                             <a class="d-flex align-items-center" href="{{route('vendor-debit-details')}}">
                                 <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item text-truncate" data-i18n="Vendor Debit Details">Vendor Credit Details</span>
+                                <span class="menu-item text-truncate" data-i18n="Vendor Debit Details">Vendor Debit Details</span>
                             </a>
                         </li>
                         <li class="{{ Request::is('purchase-order-details*') ? 'active' : ''}}">
@@ -404,6 +404,32 @@
                                 <span class="menu-item text-truncate" data-i18n="Expenses Details">Expenses Details</span>
                             </a>
                         </li>
+                    </ul>
+                </li>
+                {{-- Purchase and Expenses --}}
+
+                {{-- Purchase and Expenses --}}
+                <li class=" nav-item"><a href="#"><i class="bx bx-user-plus"></i><span class="menu-title text-truncate" data-i18n="Inventory Reports">Inventory Reports</span></a>
+                    <ul class="menu-content">
+                        <li class="{{ Request::is('inventory-valuation-summary') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('inventory-valuation-summary')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="inventory-valuation-summary">Inventory Valuation Summary</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('inventory-summery') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('inventory-summary')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="Inventory Summery">Inventory Summery</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('fifo-cost-lot-tracking') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('fifo-cost-lot-tracking')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="Inventory Summery">FIFO Cost Lot Tracking</span>
+                            </a>
+                        </li>
+                        
                     </ul>
                 </li>
                 {{-- Purchase and Expenses --}}

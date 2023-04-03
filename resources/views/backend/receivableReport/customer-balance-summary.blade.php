@@ -2,10 +2,6 @@
 @push('css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css" rel="stylesheet" />
 @endpush
-@php
-    $company_name= \App\Setting::where('config_name', 'company_name')->first();
-@endphp
-@section('title', 'Invoice Details')
 @section('content')
 @include('layouts.backend.partial.style')
     <!-- BEGIN: Content-->
@@ -17,15 +13,14 @@
             <div>
                 <section id="widgets-Statistics" class="mr-1 ml-1 mb-1">
                     <div class="row">
-                        <div class="col-md-12 text-center mt-2">
-                            <h4>{{ $company_name->config_value}}</h4>
-                            <h6> Customer Balance Summary</h6>
+                        <div class="col-md-6  mt-2">
+                            <h4>customer Balance Summary</h4>
                         </div>
-                    </div>
-                    <div class="d-flex flex-row-reverse">
-                        <a href="#" class="btn btn-primary mr-1" data-toggle="modal" data-target="#exampleModalCenter">Fitter</a>
-                        <a href="{{route('customer-balance-excel-download')}}" class="btn btn-info mr-1">Excel</a>
-                        <a href="{{route('customer-balance-pdf-download')}}" class="btn btn-light mr-1">PDF Download</a>
+                        {{-- <div class="col-md-6  mt-2 text-right">
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                                Fitter
+                              </button>
+                        </div> --}}
                     </div>
                 </section>
 
@@ -47,9 +42,9 @@
                                 <thead  class="thead-light">
                                     <tr style="height: 50px;">
                                         <th>Customer Name</th>
-                                        <th class="text-right pr-2">Invoiced amount</th>
-                                        <th class="text-right pr-2">Amount received</th>
-                                        <th class="text-right pr-2">Closing balance</th>
+                                        <th>Invoiced amount</th>
+                                        <th>Amount received</th>
+                                        <th>Closing balance</th>
                                     </tr>
                                 </thead>
                                 <tbody class="user-table-body">
@@ -71,9 +66,9 @@
                                                         {{ $party->pi_name }}
                                                     </a>
                                                 </td>
-                                                <td class="text-right pr-2">{{ $invoice_amount }}</td>
-                                                <td class="text-right pr-2">{{ $received_amount }}</td>
-                                                <td class="text-right pr-2">{{ $invoice_amount-$received_amount }}</td>
+                                                <td class="text-center">{{ $invoice_amount }}</td>
+                                                <td class="text-center">{{ $received_amount }}</td>
+                                                <td class="text-center">{{ $invoice_amount-$received_amount }}</td>
                                             </tr>
                                         @endif
                                     @endforeach

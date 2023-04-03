@@ -46,6 +46,7 @@
                                         <th>Bill</th>
                                         <th>Vendor name</th>
                                         <th class="text-right pl-2">Bill Amount</th>
+                                        <th class="text-right pl-2">Amount Paid</th>
                                         <th class="text-right pl-2">Balance Amount</th>
                                     </tr>
                                 </thead>
@@ -75,6 +76,7 @@
                                             <td>{{$purchase->purchase_no}}</td>
                                             <td>{{$purchase->partInfo->pi_name}}</td>
                                             <td class="text-right"><small>(AED)</small> {{number_format($purchase->purchase_details->sum('total_amount'),2)}}</td>
+                                            <td class="text-right"><small>(AED)</small> {{number_format($purchase->paid_amount->sum('paid_amount'),2)}}</td>
                                             <td class="text-right"><small>(AED)</small> {{number_format($purchase->purchase_details->sum('total_amount')-$purchase->paid_amount->sum('paid_amount'))}}</td>
                                         </tr>
                                     @endforeach

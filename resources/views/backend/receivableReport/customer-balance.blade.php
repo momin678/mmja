@@ -90,17 +90,20 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
 
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <a href="#" class="btn btn-sm btn-info float-right" id="pagePrint">Print</a>
+                            {{-- <button class="btn  btn-info btn-sm float-right mr-1"
+                        onclick="exportTableToCSV('stockPosition-{{ date('d M Y') }}.csv')">Export To CSV</button> --}}
+                        </div>
                         <div class="table-responsive pt-1">
-                            <table class="table table-sm table-bordered exprortTable">
-                                <thead>
-                                    <tr style="height: 40px;">
-                                        <th>SL No</th>
-                                        <th>Customer Name</th>
-                                        <th>Invoice Balance</th>
-                                        <th>Available Credit</th>
-                                        <th>Balance</th>
-                                    </tr>
-                                </thead>
+                            <table class="table table-sm table-bordered">
+                                <tr style="height: 40px;">
+                                    <th>SL No</th>
+                                    <th>Customer Name</th>
+                                    <th>Invoice Balance</th>
+                                    <th>Available Credit</th>
+                                    <th>Balance</th>
+                                </tr>
                                 <tbody class="invoice-tbody">
                                     @php
                                         $grand_total_invoice=0;
@@ -125,8 +128,7 @@ $currency= \App\Setting::where('config_name', 'currency')->first();
                                     @endphp
                                 @endforeach
                                 <tr class="border-bottom">
-                                    <td></td>
-                                    <td>Grand Total</td>
+                                    <td colspan="2" style="text-center">Grand Total</td>
                                     <td class="text-right">{{ number_format((float)$grand_total_invoice,'2','.','')}}</td>
                                     <td class="text-right">{{ number_format((float)$grand_total_credit,'2','.','')}}</td>
                                     <td class="text-right">{{ number_format((float)$grand_total_balance,'2','.','')}}</td>

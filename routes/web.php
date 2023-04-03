@@ -570,6 +570,11 @@ Route::get('ar-ageing-details', 'backend\AccountsReportController@ar_ageing_deta
 Route::get('receivable-summary', 'backend\AccountsReportController@receivable_summary')->name('receivable-summary');
 Route::get('receivable-details/{id}', 'backend\AccountsReportController@receivable_details')->name('receivable-details');
 
+Route::get('inventory-valuation-summary', 'backend\InventoryReportController@inventory_valuation_summary')->name('inventory-valuation-summary');
+Route::get('inventory-summary', 'backend\InventoryReportController@inventory_summary')->name('inventory-summary');
+
+Route::get('fifo-cost-lot-tracking', 'backend\InventoryReportController@fifo_cost_lost_tracking')->name('fifo-cost-lot-tracking');
+
 
 // Mominul Accounts Report
 Route::get('tax-invoice-detail', 'backend\AccountsReportController@tax_invoice_detail')->name('tax-invoice-detail');
@@ -594,11 +599,8 @@ Route::get('vbd-excel-download/{id}', 'backend\AccountsReportController@vbd_exce
 Route::post('purchase-order-by-vendor-details', 'backend\AccountsReportController@purchase_order_by_vendor_details')->name('purchase-order-by-vendor-details');
 Route::get('pov-pdf-download/{id}', 'backend\AccountsReportController@pov_pdf_download')->name('pov-pdf-download');
 Route::get('pov-excel-download/{id}', 'backend\AccountsReportController@pov_excel_download')->name('pov-excel-download');
-// 23/3/23
-Route::get('customer-balance-excel-download', 'backend\AccountsReportController@customer_balance_excel_download')->name('customer-balance-excel-download');
-Route::get('customer-balance-pdf-download', 'backend\AccountsReportController@customer_balance_pdf_download')->name('customer-balance-pdf-download');
-Route::get('receivable-summary-excel-download', 'backend\AccountsReportController@receivable_summary_excel_download')->name('receivable-summary-excel-download');
-Route::get('receivable-summary-pdf-download', 'backend\AccountsReportController@receivable_summary_pdf_download')->name('receivable-summary-pdf-download');
+
+
 // Tarek Accounting Report
 //payable
 Route::get('ap-ageing-summary', 'backend\PayableReportController@ap_ageing_summary')->name('ap-ageing-summary');

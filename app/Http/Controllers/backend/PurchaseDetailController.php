@@ -95,6 +95,7 @@ class PurchaseDetailController extends Controller
      */
     public function show($id)
     {
+        
         $purchase_info = Purchase::find($id);
         $purchase_items = PurchaseDetail::where('purchase_no', $purchase_info->purchase_no)->get();
         $payMode = PayMode::all();

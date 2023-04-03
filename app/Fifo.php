@@ -8,4 +8,12 @@ class Fifo extends Model
 {
     //
     protected $fillable=['unit_cost_price'];
+
+    public function purchase_info(){
+        return $this->belongsTo(Purchase::class,'purchase_id');
+    }
+
+    public function item_info(){
+        return $this->belongsTo(ItemList::class,'item_id');
+    }
 }

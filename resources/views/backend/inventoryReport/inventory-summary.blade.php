@@ -2,7 +2,7 @@
 @php
     $company_name= \App\Setting::where('config_name', 'company_name')->first();
 @endphp
-@section('title', 'Vendor Balances')
+@section('title', 'Inventory Valuation Summery')
 @push('css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css" rel="stylesheet" />
 @endpush
@@ -19,7 +19,7 @@
                     <div class="row">
                         <div class="col-md-12  mt-2 text-center">
                             <h4>{{ $company_name->config_value}}</h4>
-                            <h5>Vendor Balances</h5>
+                            <h5>Inventory Summery</h5>
                         </div>
                         {{-- <div class="col-md-6  mt-2 text-right">
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
@@ -32,34 +32,49 @@
                 <section class="mr-1 ml-1">
                     <div class="mt-2">
                         <div class="cardStyleChange">
-                            <table class="table table-sm table-hover exprortTable">
+                            <table class="table mb-0 table-sm table-hover exprortTable">
                                 <thead  class="thead-light">
                                     <tr style="height: 50px;">
-                                        <th>Vendor name</th>
-                                        <th class="text-right pl-2">Bill Balance (FCY)</th>
-                                        <th class="text-right pl-2">Payment (FCY)</th>
-                                        <th class="text-right pl-2">Balance (FCY)</th>
+                                        <th>Item name</th>
+                                        <th>SKU</th>
+                                        <th>Reorder Level</th>
+                                        <th>Quantity Ordered</th>
+                                        <th>Quantity IN</th>
+                                        <th>Quantity OUT</th>
+                                        <th>Stock In Hand</th>
+                                        <th>Committed Stock</th>
+                                        <th>Available For Sale</th>
                                     </tr>
                                 </thead>
                                 <tbody class="user-table-body">
-                                    @foreach ($customers as $key => $customer)
+                                    @php
+                                        
+                                    @endphp
+                                    @foreach ($items as $key => $item)
                                         @php
-                                            $amount = 0;
-                                            $invoices = $customer->purchase;
-                                            $paid_amount = $customer->paidAmount->sum('paid_amount');
-                                            foreach ($invoices as $key => $value) {
-                                                $amount += $value->purchase_details->sum('total_amount');
-                                            }
+                                            
                                         @endphp
+                                        
                                         <tr class="trFontSize">
-                                            <td>
-                                                <a href="#" class="vendor-balances-details" id="{{$customer->id}}"> {{ $customer->pi_name }} </a>
-                                            </td>
-                                            <td class="text-right pl-2"><small>(AED)</small> {{ $amount }}</td>
-                                            <td class="text-right pl-2"><small>(AED)</small> {{$paid_amount}}</td>
-                                            <td class="text-right pl-2"><small>(AED)</small> {{$amount-$paid_amount}}</td>
+                                            <td>{{$item->item_name}}</td>
+                                            <td>{{$item->sku}}</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                            <td>{{ $item->stockIn()}}</td>
+                                            <td>{{ $item->stockOut()}}</td>
+                                            <td>{{$item->itemStock()}}</td>
+                                            <td>0</td>
+                                            <td>0</td>
                                         </tr>
+                                        
+
                                     @endforeach
+                                    {{-- <tr>
+                                        <td>Total</td>
+                                        <td></td>
+                                        <td>0</td>
+                                        <td class="text-right pr-2"><small>(AED)</small> {{$total_amount}}</td>
+                                    </tr> --}}
                                 </tbody>
                             </table>
                         </div>
@@ -69,7 +84,7 @@
         </div>
     </div>
     <!-- END: Content-->
-    <div class="modal fade bd-example-modal-lg" id="vendor-balances-modal" tabindex="-1" rrole="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal fade bd-example-modal-lg" id="purchase-order-modal" tabindex="-1" rrole="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="min-width: 90% !important;">
           <div class="modal-content">
             <section class="print-hideen border-bottom">
@@ -77,7 +92,7 @@
                     <div class="mIconStyleChange"><a href="#" class="close btn-icon btn btn-danger" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class='bx bx-x'></i></span></a></div>
                 </div>
             </section>
-            <div id="vendor-balances-details-content">
+            <div id="purchase-order-by-vendor-details-content">
                 
             </div>
           </div>
@@ -131,11 +146,11 @@
 @push('js')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/js/toastr.js"></script>
     <script>
-        $(document).on("click", ".vendor-balances-details", function(e) {
+        $(document).on("click", ".purchase-order-by-vendor-details", function(e) {
             e.preventDefault();
             var id= $(this).attr('id');
             $.ajax({
-                url: "{{URL('vendor-balances-details')}}",
+                url: "{{URL('purchase-order-by-vendor-details')}}",
                 method: "POST",
                 cache: false,
                 data:{
@@ -143,8 +158,8 @@
                     id:id,
                 },
                 success: function(response){
-                    document.getElementById("vendor-balances-details-content").innerHTML = response;
-                    $('#vendor-balances-modal').modal('show');
+                    document.getElementById("purchase-order-by-vendor-details-content").innerHTML = response;
+                    $('#purchase-order-modal').modal('show');
                 }
             });
         });

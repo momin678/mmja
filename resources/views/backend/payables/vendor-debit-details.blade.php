@@ -2,7 +2,7 @@
 @php
     $company_name= \App\Setting::where('config_name', 'company_name')->first();
 @endphp
-@section('title', 'Vendor Credit Details')
+@section('title', 'Vendor Debit Details')
 @push('css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css" rel="stylesheet" />
 @endpush
@@ -19,7 +19,7 @@
                     <div class="row">
                         <div class="col-md-12 mt-2 text-center">
                             <h4>{{ $company_name->config_value}}</h4>
-                            <h5>Vendor Credits Details</h5>
+                            <h5>Vendor Debit Details</h5>
                         </div>
                         {{-- <div class="col-md-6  mt-2 text-right">
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
@@ -36,8 +36,8 @@
                                 <thead  class="thead-light">
                                     <tr style="height: 50px;">
                                         <th>Status</th>
-                                        <th>Vendor Credit Date</th>
-                                        <th>Credit  Note</th>
+                                        <th>Vendor Debit Date</th>
+                                        <th>Debit  Note</th>
                                         <th>Vendor name</th>
                                         <th class="text-right pr-2">Amount</th>
                                         <th class="text-right pr-2">Balance Amount</th>

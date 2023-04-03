@@ -33,6 +33,7 @@ class ItemListController extends Controller
      */
     public function index()
     {
+        // return "Alhamdulillah";
         $itme_lists = ItemList::orderBy("barcode")->paginate(20);
         $units = Unit::all();
         $vatRates = VatRate::all();
@@ -82,6 +83,7 @@ class ItemListController extends Controller
         $item_list->group_name = $group->group_name;
         $item_list->group_no = $group->group_no;
         $item_list->barcode = $request->barcode;
+        $item_list->sku = 'FS'.$request->barcode;
         $item_list->style_id = $request->style_id;
         $item_list->item_name = $request->item_name;
         $item_list->brand_id = $request->brand_id;
@@ -166,6 +168,7 @@ class ItemListController extends Controller
         $item_list->group_name = $group->group_name;
         $item_list->group_no = $group->group_no;
         $item_list->barcode = $request->barcode;
+        $item_list->sku = 'FS'.$request->barcode;
         $item_list->style_id = $request->style_id;
         $item_list->item_name = $request->item_name;
         $item_list->brand_id = $request->brand_id;

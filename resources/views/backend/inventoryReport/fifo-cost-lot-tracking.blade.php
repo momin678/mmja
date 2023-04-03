@@ -1,4 +1,8 @@
 @extends('layouts.backend.app')
+@php
+    $company_name= \App\Setting::where('config_name', 'company_name')->first();
+@endphp
+@section('title', 'Inventory Valuation Summery')
 @push('css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css" rel="stylesheet" />
 @endpush
@@ -13,70 +17,79 @@
             <div>
                 <section id="widgets-Statistics" class="mr-1 ml-1 mb-1">
                     <div class="row">
-                        <div class="col-md-6  mt-2">
-                            <h4>Sales Order Details</h4>
+                        <div class="col-md-12  mt-2 text-center">
+                            <h4>{{ $company_name->config_value}}</h4>
+                            <h5>FIFO Cost Lot Tracking</h5>
                         </div>
-                        <div class="col-md-6  mt-2 text-right">
+                        {{-- <div class="col-md-6  mt-2 text-right">
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
                                 Fitter
                               </button>
-                        </div>
+                        </div> --}}
                     </div>
                 </section>
 
                 <section class="mr-1 ml-1">
                     <div class="mt-2">
-                        {{-- <div class="row mb-1">
-                            <div class="col-md-6">
-                                <form>
-                                <input type="text" name="q" class="form-control inputFieldHeight input-xs pull-right ajax-search" placeholder="Search By Code, Party Name, TRN Number"data-url="{{ route('admin.masterAccSearchAjax', $id = 'partyCenter') }}">
-                                </form>
-                            </div>
-                            <div class="col-md-6 text-right">
-                                <a href="#" onclick="partyListPrint()" class="btn btn-xs mPrint formButton" title="Print"><img  src="{{asset('assets/backend/app-assets/icon/print-icon.png')}}" alt="" srcset="" class="img-fluid" width="30"> Print</a>
-                                <a href="#" class="btn btn-xs mExcelButton formButton" onclick="exportTableToCSV('PartyInfos.csv')" title="Export to Excel"><img  src="{{asset('assets/backend/app-assets/icon/excel-icon.png')}}" alt="" srcset="" class="img-fluid" width="30">Export To Excel</a href="#">
-                            </div>
-                        </div> --}}
                         <div class="cardStyleChange">
-                            <table class="table mb-0 table-sm table-hover">
+                            <table class="table mb-0 table-sm table-hover exprortTable">
                                 <thead  class="thead-light">
+                                    <tr>
+                                        <th colspan="6" class="text-center" style="border-right: 1px solid #aeaeb1">
+                                            Product In
+                                        </th>
+                                        <th colspan="5" class="text-center">
+                                            Product Out
+                                        </th>
+                                    </tr>
                                     <tr style="height: 50px;">
-                                        <th>Status</th>
                                         <th>Date</th>
-                                        <th>Expected Shipment Date</th>
-                                        <th>Sales Order No</th>
-                                        <th>Customer Name</th>
-                                        <th>Amount</th>
-                                        <th>Balance</th>
+                                        <th>Transactions</th>
+                                        <th>Received From</th>
+                                        <th>Item Name</th>
+                                        <th>Quantity</th>
+                                        <th style="border-right: 1px solid #aeaeb1">Total</th>
+                                        <th>Date</th>
+                                        <th>Transaction</th>
+                                        <th>Despatched To</th>
+                                        <th>Quantity</th>
+                                        <th>Total</th>
                                     </tr>
                                 </thead>
                                 <tbody class="user-table-body">
-                                    @foreach ($invoicess as $key => $invoice)
+                                    @php
+                                        
+                                    @endphp
+                                    @foreach ($items as $item)
                                     <tr class="trFontSize">
+                                        <td>{{ $item->purchase_info->date }}</td>
+                                        <td>{{ $item->purchase_info->purchase_no }}</td>
+                                        <td>{{ $item->purchase_info->partInfo->pi_name }}</td>
                                         <td>
-                                            @if ($invoice->invoiceAmount->amount_from == 0)
-                                                <span>Unpaid</span>
-                                            @elseif($invoice->invoiceAmount->amount_from>0 && $invoice->invoiceAmount->amount_to<0)
-                                                <span>Partial</span>
-                                            @else
-                                                <span>Paid</span>
-                                            @endif
+                                            {{ $item->item_info->item_name}} <br>
+                                            SKU: {{ $item->item_info->sku}}
                                         </td>
-                                        <td>{{ Carbon\Carbon::parse($invoice->date)->format('d-m-Y') }} </td>
+                                        <td>
+                                            {{ $item->quantity}}
+                                            <br> Qty Remaining: {{ $item->consumed}}
+                                        </td>
+                                        <td style="border-right: 1px solid #aeaeb1">630</td>
                                         <td></td>
-                                        <td><a href="#" class="invoice-details" id="{{ $invoice->invoice_no }}">{{ $invoice->invoice_no }}</a></td>
-                                        <td>{{ $invoice->partyInfo($invoice->customer_name)->pi_name }}</td>
-                                        <td><small>(AED) </small>{{ number_format($invoice->grossTotal($invoice->invoice_no),2) }}</td>
-                                        <td><small>(AED) </small>{{substr(number_format($invoice->invoiceAmount->amount_to,2),1)  }}</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
                                     </tr>
                                     @endforeach
+                                    
+                                    {{-- <tr>
+                                        <td>Total</td>
+                                        <td></td>
+                                        <td>0</td>
+                                        <td class="text-right pr-2"><small>(AED)</small> {{$total_amount}}</td>
+                                    </tr> --}}
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12 text-right mt-1">
-                            {{ $invoicess->links() }}
                         </div>
                     </div>
                 </section>
@@ -84,15 +97,16 @@
         </div>
     </div>
     <!-- END: Content-->
-    <div class="modal fade bd-example-modal-lg" id="invoice-modal" tabindex="-1" rrole="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal fade bd-example-modal-lg" id="purchase-order-modal" tabindex="-1" rrole="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="min-width: 90% !important;">
           <div class="modal-content">
-            <section class="print-hideen border-bottom p-1">
+            <section class="print-hideen border-bottom">
                 <div class="d-flex flex-row-reverse">
                     <div class="mIconStyleChange"><a href="#" class="close btn-icon btn btn-danger" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class='bx bx-x'></i></span></a></div>
                 </div>
             </section>
-            <div id="invoice-details-content" class="m-1">
+            <div id="purchase-order-by-vendor-details-content">
+                
             </div>
           </div>
         </div>
@@ -145,24 +159,22 @@
 @push('js')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/js/toastr.js"></script>
     <script>
-        $(document).on("click", ".invoice-details", function(e) { 
-          e.preventDefault();
-          
-          var id= $(this).attr('id');
-        //   alert(id);
-          $.ajax({
-              url: "{{URL('invoice-view-modal')}}",
-              method: "POST",
-              cache: false,
-              data:{
-                  _token:'{{ csrf_token() }}',
-                  id:id,
-              },
-              success: function(response){				
-                  document.getElementById("invoice-details-content").innerHTML = response;
-                  $('#invoice-modal').modal('show');
-              }
-          });
-      });
+        $(document).on("click", ".purchase-order-by-vendor-details", function(e) {
+            e.preventDefault();
+            var id= $(this).attr('id');
+            $.ajax({
+                url: "{{URL('purchase-order-by-vendor-details')}}",
+                method: "POST",
+                cache: false,
+                data:{
+                    _token:'{{ csrf_token() }}',
+                    id:id,
+                },
+                success: function(response){
+                    document.getElementById("purchase-order-by-vendor-details-content").innerHTML = response;
+                    $('#purchase-order-modal').modal('show');
+                }
+            });
+        });
     </script>
 @endpush

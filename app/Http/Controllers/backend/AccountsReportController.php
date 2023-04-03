@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\backend;
 
-use App\Exports\CustomerBalanceExport;
 use App\Http\Controllers\Controller;
 use App\Invoice;
 use App\InvoiceItem;
@@ -19,7 +18,6 @@ use Illuminate\Support\Facades\DB;
 use App\Exports\InvoiceExport;
 use App\Exports\PurchaseDetailsExport;
 use App\Exports\PurchaseExport;
-use App\Exports\ReceivableSummaryExport;
 use Facade\FlareClient\Http\Response;
 use Illuminate\Support\Facades\App;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -390,25 +388,7 @@ class AccountsReportController extends Controller
         $reports =  Excel::download(new PurchaseDetailsExport($id), 'Purchase-Orders-Details.xlsx');
         return $reports;
     }
-    // 23/3/23
-    public function customer_balance_pdf_download(Request $request){
-        $customers = DB::table('invoices')->select('customer_name')->groupBy('customer_name')->get();
-        $pdf = PDF::loadView('backend.receivableReport.customer-balance-pdf-download', compact('customers'));
-        return $pdf->download('customer-balance-pdf-download.pdf');
-    }
-    public function customer_balance_excel_download(Request $request){
-        $reports =  Excel::download(new CustomerBalanceExport, 'Customer-Balance-Summary.xlsx');
-        return $reports;
-    }
-    public function receivable_summary_pdf_download(Request $request){
-        $invoices= Invoice::orderBy('due_date', 'desc')->get();
-        $pdf = PDF::loadView('backend.receivableReport.receivable-summary-pdf-download', compact('invoices'));
-        return $pdf->download('receivable-summary-pdf-download.pdf');
-    }
-    public function receivable_summary_excel_download(Request $request){
-        $reports =  Excel::download(new ReceivableSummaryExport, 'Receivable-Summary.xlsx');
-        return $reports;
-    }
+
     // Mominul Report End
 
 
