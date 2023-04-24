@@ -279,12 +279,7 @@
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Delivery Challan Details</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('estimate-details') ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="#">
-                                <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item text-truncate" data-i18n="PO Generation">Estimate Details</span>
-                            </a>
-                        </li>
+                        
                         <li class="{{ Request::is('customer-balance-summary*') ? 'active' : ''}}">
                             <a class="d-flex align-items-center" href="{{route('customer-balance-summary')}}">
                                 <i class="bx bx-right-arrow-alt"></i>
@@ -307,6 +302,18 @@
                             <a class="d-flex align-items-center" href="#">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Sales Return Details</span>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ Request::is('estimate-list*')  ? 'active' : ''}}">
+                            <a href="{{ route('estimate-list.index') }}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-title text-truncate" data-i18n="Estimate">Estimate</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('estimate-details') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('estimate-details')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="estimate-details">Estimate Details</span>
                             </a>
                         </li>
                         
@@ -379,6 +386,13 @@
                                 <span class="menu-item text-truncate" data-i18n="Purchase Orders by Vendor">Purchase Orders by Vendor</span>
                             </a>
                         </li>
+
+                        <li class="{{ Request::is('payments-mode*') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('payments-mode')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="Payments Mode">Payments Mode</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 {{-- End: Payables --}}
@@ -404,6 +418,24 @@
                                 <span class="menu-item text-truncate" data-i18n="Expenses Details">Expenses Details</span>
                             </a>
                         </li>
+                        <li class="{{ Request::is('expenses-by-category*') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('expenses-by-category')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="Expenses Details">Expenses by Category</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('expenses-by-customer*') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('expenses-by-customer')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="Expenses Details">Expenses by Customer</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('expenses-by-project*') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('expenses-by-project')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="Expenses by Project">Expenses by Project</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 {{-- Purchase and Expenses --}}
@@ -417,16 +449,46 @@
                                 <span class="menu-item text-truncate" data-i18n="inventory-valuation-summary">Inventory Valuation Summary</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('inventory-summery') ? 'active' : ''}}">
+                        <li class="{{ Request::is('inventory-summary') ? 'active' : ''}}">
                             <a class="d-flex align-items-center" href="{{route('inventory-summary')}}">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="Inventory Summery">Inventory Summery</span>
                             </a>
-                        </li>
+                        </li> 
                         <li class="{{ Request::is('fifo-cost-lot-tracking') ? 'active' : ''}}">
                             <a class="d-flex align-items-center" href="{{route('fifo-cost-lot-tracking')}}">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="Inventory Summery">FIFO Cost Lot Tracking</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('inventory-ageing-report') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('inventory-ageing-report')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="inventory-ageing-report">Inventory Ageing Report</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('ageing-classification') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('ageing-classification')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="ageing-classification">Ageing Classification</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('stock-summary-report') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('stock-summary-report')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="ageing-classification">Stock Summary Report</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('product-sales-cost') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('product-sales-cost')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="Product Sales Cost">Product Sales Cost</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('abc-classification') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('abc-classification')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="ABC Classification">ABC Classification</span>
                             </a>
                         </li>
                         

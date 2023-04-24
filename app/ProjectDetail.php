@@ -65,4 +65,8 @@ class ProjectDetail extends Model
         $total_sell=$this->invoice($id,$itm);
         return $total_purchase - $total_sell;
     }
+
+    public function journalCount(){
+        return $this->hasMany(JournalRecord::class, 'project_details_id')->where('transaction_type', 'DR');
+    }
 }

@@ -19,7 +19,12 @@
                     <div class="row">
                         <div class="col-md-12  mt-2 text-center">
                             <h4>{{ $company_name->config_value}}</h4>
-                            <h5>Inventory Summery Valuation</h5>
+                            <h5>Stock Summery Report</h5>
+                            @php
+                                $startDate= '2023-03-01';
+                                $endDate= '2023-03-31';
+                            @endphp
+                            <h6>From {{$startDate}} To {{$endDate}}</h6>
                         </div>
                         {{-- <div class="col-md-6  mt-2 text-right">
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
@@ -37,42 +42,42 @@
                                     <tr style="height: 50px;">
                                         <th>Item name</th>
                                         <th>SKU</th>
-                                        <th>Stock In Hand</th>
-                                        <th class="text-right">Inventory Asset Value</th>
+                                        <th>Opening Stock</th>
+                                        <th>Quantity IN</th>
+                                        <th>Quantity OUT</th>
+                                        <th>Closing Stock</th>
+                                        <th>Value of Closing Stock</th>
                                     </tr>
                                 </thead>
                                 <tbody class="user-table-body">
                                     @php
-                                        $total_expense = 0;
-                                        $total_journal = 0;
-                                        $total_bill = 0;
-                                        $total_amount = 0;
-                                        $total_vat = 0;
+                                        
                                     @endphp
                                     @foreach ($items as $key => $item)
-                                        @php
-                                            $stock= $item->itemStock();
-                                            $price= $item->inventory_value_avg();
-                                            $value= $stock*$price;
-                                        @endphp
+                                            @php
+                                                $closing_stock= $item->dateOpeningStock($endDate);
+                                                $avg_price= number_format($item->inventory_value_avg($endDate),2,'.','');
+                                                $closing_value= $avg_price* $closing_stock;
+                                            @endphp
                                         
                                         <tr class="trFontSize">
                                             <td>{{$item->item_name}}</td>
                                             <td>{{$item->sku}}</td>
-                                            <td>{{ $stock}}</td>
-                                            <td class="text-right pr-2"><small>(AED)</small> 
-                                                {{ number_format($value,2)}}
-                                            </td>
+                                            <td>{{$item->dateOpeningStock($startDate)}}</td>
+                                            <td>{{ $item->stockInDate($startDate, $endDate)}}</td>
+                                            <td>{{ $item->stockOutDate($startDate, $endDate)}}</td>
+                                            <td>{{$closing_stock}}</td>
+                                            <td>{{$closing_value}}</td>
                                         </tr>
                                         
 
                                     @endforeach
-                                    <tr>
+                                    {{-- <tr>
                                         <td>Total</td>
                                         <td></td>
                                         <td>0</td>
                                         <td class="text-right pr-2"><small>(AED)</small> {{$total_amount}}</td>
-                                    </tr>
+                                    </tr> --}}
                                 </tbody>
                             </table>
                         </div>

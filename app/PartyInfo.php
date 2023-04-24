@@ -50,4 +50,8 @@ class PartyInfo extends Model
 
     }
 
+    public function customerName(){
+        return $this->hasMany(JournalRecord::class, 'party_info_id')->where('transaction_type', 'DR');
+    }
+
 }

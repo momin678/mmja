@@ -2,7 +2,7 @@
 @php
     $company_name= \App\Setting::where('config_name', 'company_name')->first();
 @endphp
-@section('title', 'Inventory Valuation Summery')
+@section('title', 'Expenses By Customers')
 @push('css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css" rel="stylesheet" />
 @endpush
@@ -19,7 +19,7 @@
                     <div class="row">
                         <div class="col-md-12  mt-2 text-center">
                             <h4>{{ $company_name->config_value}}</h4>
-                            <h5>Inventory Summery Valuation</h5>
+                            <h5>Expenses By Customers</h5>
                         </div>
                         {{-- <div class="col-md-6  mt-2 text-right">
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
@@ -35,42 +35,33 @@
                             <table class="table mb-0 table-sm table-hover exprortTable">
                                 <thead  class="thead-light">
                                     <tr style="height: 50px;">
-                                        <th>Item name</th>
-                                        <th>SKU</th>
-                                        <th>Stock In Hand</th>
-                                        <th class="text-right">Inventory Asset Value</th>
+                                        <th>Customer Name</th>
+                                        <th>Expense Count</th>
+                                        <th class="text-right pr-2">Expense Amount</th>
+                                        <th class="text-right pr-2">Expense Amount with Tax</th>
                                     </tr>
                                 </thead>
                                 <tbody class="user-table-body">
                                     @php
-                                        $total_expense = 0;
-                                        $total_journal = 0;
-                                        $total_bill = 0;
+                                        $amount = 0;
                                         $total_amount = 0;
-                                        $total_vat = 0;
                                     @endphp
-                                    @foreach ($items as $key => $item)
+                                    @foreach ($customers as $key => $customer)
                                         @php
-                                            $stock= $item->itemStock();
-                                            $price= $item->inventory_value_avg();
-                                            $value= $stock*$price;
+                                            $amount += $customer->customerName->sum('amount');
+                                            $total_amount += $customer->customerName->sum('total_amount');
                                         @endphp
-                                        
                                         <tr class="trFontSize">
-                                            <td>{{$item->item_name}}</td>
-                                            <td>{{$item->sku}}</td>
-                                            <td>{{ $stock}}</td>
-                                            <td class="text-right pr-2"><small>(AED)</small> 
-                                                {{ number_format($value,2)}}
-                                            </td>
+                                            <td>{{$customer->pi_name}}</td>
+                                            <td>{{count($customer->customerName)}}</td>
+                                            <td class="text-right pr-2"><small>(AED)</small> {{$customer->customerName->sum('amount')}}</td>
+                                            <td class="text-right pr-2"><small>(AED)</small> {{$customer->customerName->sum('total_amount')}}</td>
                                         </tr>
-                                        
-
                                     @endforeach
                                     <tr>
                                         <td>Total</td>
                                         <td></td>
-                                        <td>0</td>
+                                        <td class="text-right pr-2"><small>(AED)</small> {{$amount}}</td>
                                         <td class="text-right pr-2"><small>(AED)</small> {{$total_amount}}</td>
                                     </tr>
                                 </tbody>

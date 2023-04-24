@@ -19,7 +19,12 @@
                     <div class="row">
                         <div class="col-md-12  mt-2 text-center">
                             <h4>{{ $company_name->config_value}}</h4>
-                            <h5>Inventory Summery Valuation</h5>
+                            <h5>Product Sales Cost</h5>
+                            @php
+                                $startDate= '2023-03-01';
+                                $endDate= '2023-03-31';
+                            @endphp
+                            <h6>From {{$startDate}} To {{$endDate}}</h6>
                         </div>
                         {{-- <div class="col-md-6  mt-2 text-right">
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
@@ -37,42 +42,47 @@
                                     <tr style="height: 50px;">
                                         <th>Item name</th>
                                         <th>SKU</th>
-                                        <th>Stock In Hand</th>
-                                        <th class="text-right">Inventory Asset Value</th>
+                                        <th>Sold QTY</th>
+                                        <th>Selling Price Per Unit</th>
+                                        <th>Cost Price Per Unit</th>
+                                        <th>Total Selling Price</th>
+                                        <th>Total Cost Price</th>
+                                        <th>Average Margin Per Unit</th>
                                     </tr>
                                 </thead>
                                 <tbody class="user-table-body">
                                     @php
-                                        $total_expense = 0;
-                                        $total_journal = 0;
-                                        $total_bill = 0;
-                                        $total_amount = 0;
-                                        $total_vat = 0;
+                                        
                                     @endphp
                                     @foreach ($items as $key => $item)
-                                        @php
-                                            $stock= $item->itemStock();
-                                            $price= $item->inventory_value_avg();
-                                            $value= $stock*$price;
-                                        @endphp
+                                            @php
+                                                $unit_sale_price= number_format($item->avg_sales_price(),2);
+                                                $avg_cost_price= number_format($item->inventory_value_avg(),2);
+                                                $sales_qty= $item->sales_qty();
+                                                $total_sales_value= $sales_qty * $unit_sale_price;
+                                                $total_cost_value= $sales_qty * $avg_cost_price;
+                                                $margin= $unit_sale_price-$avg_cost_price;
+                                            @endphp
                                         
                                         <tr class="trFontSize">
-                                            <td>{{$item->item_name}}</td>
-                                            <td>{{$item->sku}}</td>
-                                            <td>{{ $stock}}</td>
-                                            <td class="text-right pr-2"><small>(AED)</small> 
-                                                {{ number_format($value,2)}}
-                                            </td>
+                                            <td>{{ $item->item_name}}</td>
+                                            <td>{{ $item->sku}}</td>
+                                            <td>{{ $item->stockOutDate($startDate,$endDate)}}</td>
+                                            <td>{{ $unit_sale_price }}</td>
+                                            <td>{{ $avg_cost_price }}</td>
+                                            <td>{{ $item->total_sales()}}</td>
+                                            <td>{{ $total_cost_value }}</td>
+                                            <td>{{ $margin}}</td>
                                         </tr>
                                         
 
                                     @endforeach
-                                    <tr>
+                                    {{-- <tr>
                                         <td>Total</td>
                                         <td></td>
                                         <td>0</td>
                                         <td class="text-right pr-2"><small>(AED)</small> {{$total_amount}}</td>
-                                    </tr>
+                                    </tr> --}}
                                 </tbody>
                             </table>
                         </div>

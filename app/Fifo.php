@@ -16,4 +16,8 @@ class Fifo extends Model
     public function item_info(){
         return $this->belongsTo(ItemList::class,'item_id');
     }
+
+    public function getTotalAmountAttribute(){
+        return $this->quantity*$this->unit_cost_price;
+    }
 }

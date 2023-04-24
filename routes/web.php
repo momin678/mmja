@@ -574,6 +574,11 @@ Route::get('inventory-valuation-summary', 'backend\InventoryReportController@inv
 Route::get('inventory-summary', 'backend\InventoryReportController@inventory_summary')->name('inventory-summary');
 
 Route::get('fifo-cost-lot-tracking', 'backend\InventoryReportController@fifo_cost_lost_tracking')->name('fifo-cost-lot-tracking');
+Route::get('inventory-ageing-report', 'backend\InventoryReportController@inventory_ageing_report')->name('inventory-ageing-report');
+Route::get('ageing-classification', 'backend\InventoryReportController@ageing_classification')->name('ageing-classification');
+Route::get('stock-summary-report', 'backend\InventoryReportController@stock_summary_report')->name('stock-summary-report');
+Route::get('product-sales-cost', 'backend\InventoryReportController@product_sales_cost')->name('product-sales-cost');
+Route::get('abc-classification', 'backend\InventoryReportController@abc_classification')->name('abc-classification');
 
 
 // Mominul Accounts Report
@@ -599,6 +604,13 @@ Route::get('vbd-excel-download/{id}', 'backend\AccountsReportController@vbd_exce
 Route::post('purchase-order-by-vendor-details', 'backend\AccountsReportController@purchase_order_by_vendor_details')->name('purchase-order-by-vendor-details');
 Route::get('pov-pdf-download/{id}', 'backend\AccountsReportController@pov_pdf_download')->name('pov-pdf-download');
 Route::get('pov-excel-download/{id}', 'backend\AccountsReportController@pov_excel_download')->name('pov-excel-download');
+
+Route::get('expenses-by-category', 'backend\AccountsReportController@expenses_by_category')->name('expenses-by-category');
+Route::get('expenses-by-customer', 'backend\AccountsReportController@expenses_by_customer')->name('expenses-by-customer');
+Route::get('payments-mode', 'backend\AccountsReportController@payments_mode')->name('payments-mode');
+Route::resource('estimate-list', 'backend\EstimateDetailsController');
+Route::get('estimate-details', 'backend\AccountsReportController@estimate_details')->name('estimate-details');
+Route::get('expenses-by-project', 'backend\AccountsReportController@expenses_by_project')->name('expenses-by-project');
 
 
 // Tarek Accounting Report

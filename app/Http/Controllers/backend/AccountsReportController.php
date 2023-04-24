@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\backend;
 
+use App\EstimateDetail;
 use App\Http\Controllers\Controller;
 use App\Invoice;
 use App\InvoiceItem;
@@ -18,6 +19,8 @@ use Illuminate\Support\Facades\DB;
 use App\Exports\InvoiceExport;
 use App\Exports\PurchaseDetailsExport;
 use App\Exports\PurchaseExport;
+use App\Journal;
+use App\ProjectDetail;
 use Facade\FlareClient\Http\Response;
 use Illuminate\Support\Facades\App;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -218,12 +221,12 @@ class AccountsReportController extends Controller
         ->rightJoin('invoices as tb2', 'tb1.pi_code', '=', 'tb2.customer_name')
         ->select('tb1.id', 'tb1.pi_code','tb1.pi_name', 
         DB::raw("SUM(tb2.grand_total) as gtotal"),
-        DB::raw("SUM(IF(tb2.due_date =CURDATE(), tb2.grand_total, 0 )) as current"),
-        DB::raw("SUM(IF(tb2.due_date BETWEEN DATE_SUB('2023-03-10', INTERVAL 14 DAY) AND '2023-03-10', tb2.grand_total, 0 )) as 'days_1_15'"),
-        DB::raw("SUM(IF(tb2.due_date BETWEEN DATE_SUB('2023-03-10', INTERVAL 29 DAY) AND DATE_SUB('2023-03-10', INTERVAL 15 DAY), tb2.grand_total, 0)) as 'days_16_30'"),
-        DB::raw("SUM(IF(tb2.due_date BETWEEN DATE_SUB('2023-03-10', INTERVAL 44 DAY) AND DATE_SUB('2023-03-10', INTERVAL 30 DAY), tb2.grand_total, 0)) as 'days_31_45'"),
-        DB::raw("SUM(IF(tb2.due_date BETWEEN DATE_SUB('2023-03-10', INTERVAL 59 DAY) AND DATE_SUB('2023-03-10', INTERVAL 45 DAY), tb2.grand_total, 0)) as 'days_46_60'"),
-        DB::raw("SUM(IF(tb2.due_date < DATE_SUB('2023-03-10', INTERVAL 60 DAY), tb2.grand_total, 0)) as 'days_up_60'")
+        DB::raw("SUM(IF(tb2.due_date > CURDATE(), tb2.grand_total, 0 )) as current"),
+        DB::raw("SUM(IF(tb2.due_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 14 DAY) AND CURDATE(), tb2.grand_total, 0 )) as 'days_1_15'"),
+        DB::raw("SUM(IF(tb2.due_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 29 DAY) AND DATE_SUB(CURDATE(), INTERVAL 15 DAY), tb2.grand_total, 0)) as 'days_16_30'"),
+        DB::raw("SUM(IF(tb2.due_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 44 DAY) AND DATE_SUB(CURDATE(), INTERVAL 30 DAY), tb2.grand_total, 0)) as 'days_31_45'"),
+        DB::raw("SUM(IF(tb2.due_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 59 DAY) AND DATE_SUB(CURDATE(), INTERVAL 45 DAY), tb2.grand_total, 0)) as 'days_46_60'"),
+        DB::raw("SUM(IF(tb2.due_date < DATE_SUB(CURDATE(), INTERVAL 60 DAY), tb2.grand_total, 0)) as 'days_up_60'")
         )
         ->where('tb1.pi_type', 'Customer')
         ->groupBy('tb2.customer_name')
@@ -387,6 +390,27 @@ class AccountsReportController extends Controller
     public function pov_excel_download($id){
         $reports =  Excel::download(new PurchaseDetailsExport($id), 'Purchase-Orders-Details.xlsx');
         return $reports;
+    }
+
+    public function expenses_by_category(Request $reports){
+        $acc_heads = AccountHead::all();
+        return view('backend.payables.expenses-by-category',compact('acc_heads'));
+    }
+    public function expenses_by_customer(Request $reports){
+        $customers = PartyInfo::where('pi_type', 'Customer')->get();
+        return view('backend.payables.expenses-by-customer',compact('customers'));
+    }
+    public function payments_mode(Request $request){
+        $journals = Journal::all();
+        return view('backend.payables.payments-mode',compact('journals'));
+    }
+    public function estimate_details(Request $request){
+        $estimates = EstimateDetail::all();
+        return view('backend.receivableReport.estimate-details',compact('estimates'));
+    }
+    public function expenses_by_project(Request $request){
+        $projects = ProjectDetail::all();
+        return view('backend.payables.expenses-by-project',compact('projects'));
     }
 
     // Mominul Report End

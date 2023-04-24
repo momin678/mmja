@@ -2,9 +2,14 @@
 @php
     $company_name= \App\Setting::where('config_name', 'company_name')->first();
 @endphp
-@section('title', 'Inventory Valuation Summery')
+@section('title', 'Payments Mode')
 @push('css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/css/toastr.css" rel="stylesheet" />
+    <style>
+        td{
+            font-size: 12px !important;
+        }
+    </style>
 @endpush
 @section('content')
 @include('layouts.backend.partial.style')
@@ -19,7 +24,7 @@
                     <div class="row">
                         <div class="col-md-12  mt-2 text-center">
                             <h4>{{ $company_name->config_value}}</h4>
-                            <h5>Inventory Summery Valuation</h5>
+                            <h5>Payments Mode</h5>
                         </div>
                         {{-- <div class="col-md-6  mt-2 text-right">
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
@@ -35,44 +40,56 @@
                             <table class="table mb-0 table-sm table-hover exprortTable">
                                 <thead  class="thead-light">
                                     <tr style="height: 50px;">
-                                        <th>Item name</th>
-                                        <th>SKU</th>
-                                        <th>Stock In Hand</th>
-                                        <th class="text-right">Inventory Asset Value</th>
+                                        <th>Date</th>
+                                        <th>Referance#</th>
+                                        <th>Bill#</th>
+                                        <th>Vendor Name</th>
+                                        <th>Payment Mode</th>
+                                        <th>Notes</th>
+                                        <th>Paid Through</th>
+                                        <th class="text-right pl-2">Amount</th>
+                                        <th class="text-right pl-2"> Amount (FCY)</th>
                                     </tr>
                                 </thead>
                                 <tbody class="user-table-body">
-                                    @php
-                                        $total_expense = 0;
-                                        $total_journal = 0;
-                                        $total_bill = 0;
-                                        $total_amount = 0;
-                                        $total_vat = 0;
-                                    @endphp
-                                    @foreach ($items as $key => $item)
-                                        @php
-                                            $stock= $item->itemStock();
-                                            $price= $item->inventory_value_avg();
-                                            $value= $stock*$price;
-                                        @endphp
-                                        
-                                        <tr class="trFontSize">
-                                            <td>{{$item->item_name}}</td>
-                                            <td>{{$item->sku}}</td>
-                                            <td>{{ $stock}}</td>
-                                            <td class="text-right pr-2"><small>(AED)</small> 
-                                                {{ number_format($value,2)}}
+                                    @foreach ($journals as $key => $journal)
+                                        <tr>
+                                            <td>{{$journal->date}} </td>
+                                            <td>
+                                                @if ($journal->referance)
+                                                    {{$journal->referance->name}}
+                                                @endif
                                             </td>
+                                            <td>{{$journal->journal_no}}</td>
+                                            <td>{{$journal->party->pi_name}}</td>
+                                            <td>{{$journal->pay_mode}}</td>
+                                            <td></td>
+                                            <td>
+                                                @if ($journal->pay_mode == 'Credit')
+                                                    @php
+                                                        $user = App\User::find($journal->approved_by);
+                                                    @endphp
+                                                    Petty Cash - {{$user->name}}
+                                                @endif
+                                                @if ($journal->pay_mode == 'Cash')
+                                                    @php
+                                                        $user = App\User::find($journal->approved_by);
+                                                    @endphp
+                                                    {{$user->name}} Portal
+                                                @endif
+                                                @if ($journal->pay_mode == 'Card')
+                                                    @php
+                                                        $bank = App\Models\BankDetail::first();
+                                                    @endphp
+                                                    @if ($bank)
+                                                        {{$bank->bank_name}}
+                                                    @endif
+                                                @endif
+                                            </td>
+                                            <td class="text-right"><small>(AED)</small> {{number_format($journal->total_amount,2)}}</td>
+                                            <td class="text-right"><small>(AED)</small> {{number_format($journal->total_amount,2)}}</td>
                                         </tr>
-                                        
-
                                     @endforeach
-                                    <tr>
-                                        <td>Total</td>
-                                        <td></td>
-                                        <td>0</td>
-                                        <td class="text-right pr-2"><small>(AED)</small> {{$total_amount}}</td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -82,7 +99,7 @@
         </div>
     </div>
     <!-- END: Content-->
-    <div class="modal fade bd-example-modal-lg" id="purchase-order-modal" tabindex="-1" rrole="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal fade bd-example-modal-lg" id="vendor-balances-modal" tabindex="-1" rrole="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="min-width: 90% !important;">
           <div class="modal-content">
             <section class="print-hideen border-bottom">
@@ -90,7 +107,7 @@
                     <div class="mIconStyleChange"><a href="#" class="close btn-icon btn btn-danger" data-dismiss="modal" aria-label="Close"><span aria-hidden="true"><i class='bx bx-x'></i></span></a></div>
                 </div>
             </section>
-            <div id="purchase-order-by-vendor-details-content">
+            <div id="vendor-balances-details-content">
                 
             </div>
           </div>
@@ -144,11 +161,11 @@
 @push('js')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.0/js/toastr.js"></script>
     <script>
-        $(document).on("click", ".purchase-order-by-vendor-details", function(e) {
+        $(document).on("click", ".vendor-balances-details", function(e) {
             e.preventDefault();
             var id= $(this).attr('id');
             $.ajax({
-                url: "{{URL('purchase-order-by-vendor-details')}}",
+                url: "{{URL('vendor-balances-details')}}",
                 method: "POST",
                 cache: false,
                 data:{
@@ -156,8 +173,8 @@
                     id:id,
                 },
                 success: function(response){
-                    document.getElementById("purchase-order-by-vendor-details-content").innerHTML = response;
-                    $('#purchase-order-modal').modal('show');
+                    document.getElementById("vendor-balances-details-content").innerHTML = response;
+                    $('#vendor-balances-modal').modal('show');
                 }
             });
         });

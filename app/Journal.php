@@ -70,4 +70,11 @@ class Journal extends Model
     public function voucher_type(){
         return $this->hasOne(DebitCreditVoucher::class,'journal_id');
     }
+
+    public function referance(){
+        return $this->belongsTo(User::class, 'created_by', 'id');
+    }
+    public function approved(){
+        return $this->belongsTo(User::class, 'approved_by', 'id');
+    }
 }

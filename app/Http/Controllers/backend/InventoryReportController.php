@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\ItemList;
 use App\PartyInfo;
 use App\StockTransection;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class InventoryReportController extends Controller
@@ -14,39 +15,6 @@ class InventoryReportController extends Controller
     public function inventory_valuation_summary(){
         $customers = PartyInfo::where('pi_type', 'Supplier')->paginate(25);
         $items= ItemList::all();
-        // return $items;
-
-
-        // $items= StockTransection::where('item_id',160)->get();
-        
-        // $quantity=0;
-        // $value=0;
-        // $avg_price=0;
-        // foreach($items as $item){
-            
-        //     if($item->tns_type_code=='P'){
-        //         $purchase_value= $item->quantity * $item->purchase_rate; 
-        //         $quantity= $quantity+ $item->quantity;
-        //         $value= $value + $purchase_value;
-        //         $avg_price = $value/ $quantity;
-        //     }elseif($item->tns_type_code=='S'){
-        //         $quantity= $quantity- $item->quantity;
-        //         $sales_cost= $item->quantity * $avg_price;
-        //         $value= $value-$sales_cost;
-        //         $avg_price = $value/ $quantity;
-        //     }elseif($item->tns_type_code=='T'){
-        //         $product_value= $item->quantity * $avg_price; 
-        //         $quantity= $quantity+ $item->quantity;
-        //         $value= $value+ $product_value;
-        //         $avg_price = $value/ $quantity;
-        //     }
-            
-        //     echo 'Type:'.$item->tns_type_code.'Each Qty:'. $item->quantity .' Total qty: '.$quantity.' Value: '.$value.'=='. $avg_price.'<br>';
-        // }
-        
-
-        // return $avg_price;
-
 
         return view('backend.inventoryReport.inventory-valuation-summary', compact('customers','items'));
     }
@@ -60,5 +28,43 @@ class InventoryReportController extends Controller
         // $items=Fifo::paginate(25);
         $items=Fifo::all();
         return view('backend.inventoryReport.fifo-cost-lot-tracking', compact('items')); 
+    }
+
+    public function inventory_ageing_report(){
+        $items= ItemList::all(); 
+        return view('backend.inventoryReport.inventory-ageing-report', compact('items'));
+    }
+
+    public function ageing_classification(){
+        $items= ItemList::all(); 
+        return view('backend.inventoryReport.ageing-classification', compact('items'));
+    }
+
+    public function stock_summary_report(){
+        
+        
+        $starttDate= date('Y-m-').'01';
+        $endDate= date('Y-m-').'31';
+
+        $items= ItemList::all(); 
+        return view('backend.inventoryReport.stock-summary-report', compact('items'));
+    }
+
+    public function product_sales_cost(){
+        $items= ItemList::all(); 
+        return view('backend.inventoryReport.product-sales-cost', compact('items'));
+    }
+
+    public function abc_classification(){
+        $items= ItemList::all();
+        $total_value=0;
+        foreach($items as $item){
+            $avg_cost_price= $item->inventory_value_avg();
+            $inv_qty= $item->inventory_qty();
+            $cumulative_value= $avg_cost_price*$inv_qty;
+            $total_value= $total_value + $cumulative_value;
+        }
+        $total_inventory_value= $total_value; 
+        return view('backend.inventoryReport.abc-classification', compact('items','total_inventory_value'));
     }
 }

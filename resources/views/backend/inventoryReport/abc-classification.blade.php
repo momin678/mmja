@@ -19,7 +19,12 @@
                     <div class="row">
                         <div class="col-md-12  mt-2 text-center">
                             <h4>{{ $company_name->config_value}}</h4>
-                            <h5>Inventory Summery Valuation</h5>
+                            <h5>ABC Classification</h5>
+                            @php
+                                $startDate= '2023-03-01';
+                                $endDate= '2023-03-31';
+                            @endphp
+                            <h6>From {{$startDate}} To {{$endDate}}</h6>
                         </div>
                         {{-- <div class="col-md-6  mt-2 text-right">
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
@@ -36,32 +41,42 @@
                                 <thead  class="thead-light">
                                     <tr style="height: 50px;">
                                         <th>Item name</th>
-                                        <th>SKU</th>
-                                        <th>Stock In Hand</th>
-                                        <th class="text-right">Inventory Asset Value</th>
+                                        <th>Cumulative Value</th>
+                                        <th>Cumulative Share</th>
+                                        <th>Current Class</th>
                                     </tr>
                                 </thead>
                                 <tbody class="user-table-body">
                                     @php
-                                        $total_expense = 0;
-                                        $total_journal = 0;
-                                        $total_bill = 0;
-                                        $total_amount = 0;
-                                        $total_vat = 0;
+                                        $total_value=0;
                                     @endphp
                                     @foreach ($items as $key => $item)
-                                        @php
-                                            $stock= $item->itemStock();
-                                            $price= $item->inventory_value_avg();
-                                            $value= $stock*$price;
-                                        @endphp
+                                            @php
+                                                $avg_cost_price= number_format($item->inventory_value_avg(),2);
+                                                $inv_qty= $item->inventory_qty();
+                                                $cumulative_value= $avg_cost_price*$inv_qty;
+                                                $total_value= $total_value + $cumulative_value;
+                                                $share= (($cumulative_value* 100) / $total_inventory_value);
+                                            @endphp
                                         
                                         <tr class="trFontSize">
-                                            <td>{{$item->item_name}}</td>
-                                            <td>{{$item->sku}}</td>
-                                            <td>{{ $stock}}</td>
-                                            <td class="text-right pr-2"><small>(AED)</small> 
-                                                {{ number_format($value,2)}}
+                                            <td>{{ $item->item_name}}</td>
+                                            <td>{{ $cumulative_value}}</td>
+                                            <td>{{ $share= number_format($share,2)}}%</td>
+                                            <td>
+                                                @php
+                                                    if($share>=5){
+                                                        $classification='A';
+                                                    }elseif($share>3 && $share<5){
+                                                        $classification='B';
+                                                    }elseif($share>1 && $share<3){
+                                                        $classification='C';
+                                                    }elseif($share<1){
+                                                        $classification='D';
+                                                    }
+                                                @endphp
+
+                                                {{$classification}}
                                             </td>
                                         </tr>
                                         
@@ -69,9 +84,9 @@
                                     @endforeach
                                     <tr>
                                         <td>Total</td>
-                                        <td></td>
+                                        <td>{{$total_value}}</td>
                                         <td>0</td>
-                                        <td class="text-right pr-2"><small>(AED)</small> {{$total_amount}}</td>
+                                        <td class="text-right pr-2"><small>(AED)</small> </td>
                                     </tr>
                                 </tbody>
                             </table>

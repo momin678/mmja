@@ -221,44 +221,66 @@ class ItemList extends Model
        return $purchase-$sale+$saleReturn;
     }
     
-     public function avail_stock()
+    public function avail_stock()
     {
         return $this->hasOne(Stock::class,'item_id');
     }
 
-    public function inventory_value_avg(){
-        $items= $this->hasMany(StockTransection::class,'item_id')->get();
+    public function inventory_value_avg($date=null){
+        // Agerage purchase price
+
+        if($date !=null){
+            $items= $this->hasMany(StockTransection::class,'item_id')->where('date', '<=', $date)->orderBy('date','asc')->get();
+        }else{
+            $items= $this->hasMany(StockTransection::class,'item_id')->orderBy('date','asc')->get();
+        }
+        
         
         $quantity=0;
         $value=0;
         $avg_price=0;
+        $str='';
         foreach($items as $item){
             
             if($item->tns_type_code=='P'){
                 $purchase_value= $item->quantity * $item->purchase_rate; 
                 $quantity= $quantity+ $item->quantity;
                 $value= $value + $purchase_value;
-                $avg_price = $value/ $quantity;
+                $str= $str.'='.$value;
+                // $avg_price = $value/ $quantity;
+                $avg_price = $quantity==0 ? 0 : ($value / $quantity);
             }elseif($item->tns_type_code=='S'){
                 $quantity= $quantity- $item->quantity;
                 $sales_cost= $item->quantity * $avg_price;
                 $value= $value-$sales_cost;
-                $avg_price = $value/ $quantity;
+                $str= $str.'='.$value;
+                $avg_price = $quantity==0 ? 0 : ($value / $quantity);
             }elseif($item->tns_type_code=='T'){
                 $product_value= $item->quantity * $avg_price; 
                 $quantity= $quantity+ $item->quantity;
                 $value= $value+ $product_value;
-                $avg_price = $value/ $quantity;
+                $str= $str.'='.$value;
+                $avg_price = $quantity==0 ? 0 : ($value / $quantity);
             }
-
         }
 
-        return $quantity;
+        // $avg_price == ($value / $quantity);
+
+        $avg_price = $quantity==0 ? 0 : ($value / $quantity);
+
+        return $avg_price;
     }
 
     public function stockIn()
     {
         $all= $this->hasMany(StockTransection::class,'item_id')->get();
+        $purchase=$all->where('tns_type_code','P')->sum('quantity');
+        return $purchase;
+    }
+
+    public function stockInDate($startDate,$endDate)
+    {
+        $all= $this->hasMany(StockTransection::class,'item_id')->where('date','>=', $startDate)->where('date','<=', $endDate)->get();
         $purchase=$all->where('tns_type_code','P')->sum('quantity');
         return $purchase;
     }
@@ -269,6 +291,69 @@ class ItemList extends Model
         $sale=$all->where('tns_type_code','S')->sum('quantity');
         return $sale;
     }
+
+    public function stockOutDate($startDate,$endDate)
+    {
+        $all= $this->hasMany(StockTransection::class,'item_id')->where('date','>=', $startDate)->where('date','<=', $endDate)->get();
+        $sale=$all->where('tns_type_code','S')->sum('quantity');
+        return $sale;
+    }
+
+    public function inventory_age($day1, $day2=null){
+        if($day2 ==null){
+            return $this->hasMany(Fifo::class,'item_id')->where('created_at', '<=', Carbon::now()->subDays($day1))->sum('remaining');            
+        }else{
+            return $this->hasMany(Fifo::class,'item_id')->where('created_at', '<=', Carbon::now()->subDays($day1))->where('created_at', '>=', Carbon::now()->subDays($day2))->sum('remaining');
+        }
+        
+    }
+
+    public function inventory_avg_price($day1,$day2=null){
+        if($day2 == null){
+            $all= $this->hasMany(Fifo::class,'item_id')->where('created_at', '<=', Carbon::now()->subDays($day1))->get();
+        }else{
+            $all= $this->hasMany(Fifo::class,'item_id')->where('created_at', '<=', Carbon::now()->subDays($day1))->where('created_at', '>=', Carbon::now()->subDays($day2))->get();
+        }        
+        
+        $total_amount= $all->sum('total_amount');
+        $total_quantity= $all->sum('quantity');
+        return  $total_quantity == 0 ? 0 : (number_format($total_amount / $total_quantity,2)); 
+    }
+
+    public function avg_sales_price(){
+        $all= $this->hasMany(InvoiceItem::class, 'item_id')->get();
+        $total_sales_price= $all->sum('total_unit_price');
+        $total_vat= $all->sum('vat_amount');
+        $total_sales_price= $total_sales_price+ $total_vat;
+        $quantity= $all->sum('quantity');
+
+        $avg_sales_price= $quantity==0 ? 0 : ($total_sales_price / $quantity);
+        return $avg_sales_price;
+    }
+
+    public function total_sales(){
+        $all= $this->hasMany(InvoiceItem::class, 'item_id')->get();
+        $total_sales_price= $all->sum('total_unit_price');
+        $total_vat= $all->sum('vat_amount');
+        $total_sales_price= $total_sales_price+ $total_vat;
+        
+        return $total_sales_price;
+    }
+
+    public function sales_qty(){
+        $all= $this->hasMany(InvoiceItem::class, 'item_id')->get();
+        $sales_qty= $all->sum('quantity');
+        
+        return $sales_qty;
+    }
+
+    public function inventory_qty(){
+        $all= $this->hasMany(Fifo::class,'item_id')->get();
+        $total_quantity= $all->sum('remaining');
+        return $total_quantity;
+    }
+
+    
 
 
     // Tarek End

@@ -19,7 +19,7 @@
                     <div class="row">
                         <div class="col-md-12  mt-2 text-center">
                             <h4>{{ $company_name->config_value}}</h4>
-                            <h5>Inventory Summery Valuation</h5>
+                            <h5>Inventory Ageing Report</h5>
                         </div>
                         {{-- <div class="col-md-6  mt-2 text-right">
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
@@ -36,43 +36,56 @@
                                 <thead  class="thead-light">
                                     <tr style="height: 50px;">
                                         <th>Item name</th>
-                                        <th>SKU</th>
-                                        <th>Stock In Hand</th>
-                                        <th class="text-right">Inventory Asset Value</th>
+                                        <th colspan="2" class="text-center">1-60 Days</th>
+                                        <th colspan="2" class="text-center">61-90 Days</th>
+                                        <th colspan="2" class="text-center">91-180 Days</th>
+                                        <th colspan="2" class="text-center">181-365 Days</th>
+                                        <th colspan="2" class="text-center">366 Above</th>
+                                    </tr>
+                                    <tr style="height: 50px;">
+                                        <th></th>
+                                        <th>Quantity</th>
+                                        <th>Value</th>
+                                        <th>Quantity</th>
+                                        <th>Value</th>
+                                        <th>Quantity</th>
+                                        <th>Value</th>
+                                        <th>Quantity</th>
+                                        <th>Value</th>
+                                        <th>Quantity</th>
+                                        <th>Value</th>
                                     </tr>
                                 </thead>
                                 <tbody class="user-table-body">
                                     @php
-                                        $total_expense = 0;
-                                        $total_journal = 0;
-                                        $total_bill = 0;
-                                        $total_amount = 0;
-                                        $total_vat = 0;
-                                    @endphp
-                                    @foreach ($items as $key => $item)
-                                        @php
-                                            $stock= $item->itemStock();
-                                            $price= $item->inventory_value_avg();
-                                            $value= $stock*$price;
-                                        @endphp
                                         
+                                    @endphp
+                                    @foreach ($items as $item)
+                                        
+                                    
+                                     
                                         <tr class="trFontSize">
                                             <td>{{$item->item_name}}</td>
-                                            <td>{{$item->sku}}</td>
-                                            <td>{{ $stock}}</td>
-                                            <td class="text-right pr-2"><small>(AED)</small> 
-                                                {{ number_format($value,2)}}
-                                            </td>
+                                            <td>{{$item->inventory_age(1,60)}}</td>
+                                            <td>{{ $item->inventory_avg_price(1,60)}}</td>
+                                            <td>{{$item->inventory_age(61,90)}}</td>
+                                            <td>{{ $item->inventory_avg_price(61,90)}}</td>
+                                            <td>{{$item->inventory_age(91,180)}}</td>
+                                            <td>{{ $item->inventory_avg_price(91,180)}}</td>
+                                            <td>{{$item->inventory_age(181,365)}}</td>
+                                            <td>{{ $item->inventory_avg_price(181,365)}}</td>
+                                            <td>{{$item->inventory_age(366)}}</td>
+                                            <td>{{ $item->inventory_avg_price(366)}}</td>
                                         </tr>
                                         
 
                                     @endforeach
-                                    <tr>
+                                    {{-- <tr>
                                         <td>Total</td>
                                         <td></td>
                                         <td>0</td>
                                         <td class="text-right pr-2"><small>(AED)</small> {{$total_amount}}</td>
-                                    </tr>
+                                    </tr> --}}
                                 </tbody>
                             </table>
                         </div>

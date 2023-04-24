@@ -304,9 +304,10 @@ class JournalEntryController extends Controller
 
 
         $sub_invoice = Carbon::now()->format('Ymd');
+        // return $sub_invoice;
 
-        $latest_journal_no = JournalTemp::withTrashed()->whereDate('created_at', Carbon::today())->where('journal_no', 'LIKE', "%{$sub_invoice}%")->latest()->first();
-        
+        $latest_journal_no = JournalTemp::withTrashed()->whereDate('created_at', Carbon::today())->where('journal_no', 'LIKE', "%{$sub_invoice}%")->latest('id')->first();
+        // return $latest_journal_no;
         if ($latest_journal_no) {
             $journal_no = substr($latest_journal_no->journal_no,0,-1);
             $journal_code = $journal_no + 1;
@@ -314,6 +315,8 @@ class JournalEntryController extends Controller
         } else {
             $journal_no = Carbon::now()->format('Ymd') . '001' . "J";
         }
+
+        // return $journal_no;
         $journal= new JournalTemp();
         $journal->project_id        = $request->project;
         $journal->journal_no        = $journal_no;
