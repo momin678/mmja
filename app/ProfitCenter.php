@@ -15,4 +15,9 @@ class ProfitCenter extends Model
        $pj=ProjectDetail::where('pc_code',$pc_code)->get();
        return $pj;
     }
+
+    public function projectCount(){
+        $all= $this->hasMany(ProjectDetail::class, 'pc_code','pc_code')->get();
+        return $all->count();
+    }
 }

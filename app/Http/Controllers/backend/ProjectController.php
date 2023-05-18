@@ -32,7 +32,7 @@ class ProjectController extends Controller
         {
             $p_code="PN-".$pn_code;
         }
-        // dd(1);
+        
         $profit_centers=ProfitCenter::get();
         $projectTypes=ProjectDetailsType::get();
         $projDetails=ProjectDetail::where('proj_type','!=',"Draft")->latest()->paginate(25);

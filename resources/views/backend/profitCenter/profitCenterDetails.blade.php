@@ -124,7 +124,12 @@
                                             <td style="padding-bottom: 11px; padding-top: 0px">
                                                <div class="d-flex justify-content-end">
                                                 <a href="{{ route('profitCenEdit', $pCenter) }}" class="btn" style="height: 30px; width: 30px;" title="Eidt"><img src="{{ asset('assets/backend/app-assets/icon/edit-icon.png')}}" style=" height: 30px; width: 30px;"></a>
+                                                @if ($pCenter->projectCount()==0)
                                                 <a href="{{ route('profitCenDelete', $pCenter) }}" onclick="return confirm('about to delete master account. Please, Confirm?')"  class="btn" style="height: 30px; width: 30px;" title="Delete"><img src="{{ asset('assets/backend/app-assets/icon/delete-icon.png')}}" style=" height: 30px; width: 30px; margin-left: -12px;"></a>
+                                                @else
+                                                <a href="#" onclick="return alert('Cannot Delete! This belongs to some Project/Branch')"  class="btn" style="height: 30px; width: 30px;" title="Delete"><img src="{{ asset('assets/backend/app-assets/icon/delete-icon.png')}}" style=" height: 30px; width: 30px; margin-left: -12px;"></a> 
+                                                @endif
+                                                
                                                </div>
         
                                             </td>

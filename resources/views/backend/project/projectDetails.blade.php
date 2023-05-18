@@ -172,9 +172,17 @@
                                                 <a href="{{ route('projectEdit', $proj) }}" class="btn" style="height: 30px; width: 30px;" title="Eidt">
                                                     <img src="{{ asset('assets/backend/app-assets/icon/edit-icon.png')}}" style=" height: 30px; width: 30px;">
                                                 </a>
-                                                <a href="{{ route('projectDelete', $proj) }}" onclick="return confirm('about to delete project. Please, Confirm?')"  class="btn" style="height: 30px; width: 30px;" title="Delete">
+                                                
+                                                @if ($proj->journalEntryCount()==0 && $proj->tempJournal()==0 && $proj->costCenterCount()==0)
+                                                <a href="{{ route('projectDelete', $proj) }}" onclick="return confirm('about to delete project. Please, Confirm?')" class="btn" style="height: 30px; width: 30px;" title="Delete">
                                                     <img src="{{ asset('assets/backend/app-assets/icon/delete-icon.png')}}" style=" height: 30px; width: 30px; margin-left: -12px;">
                                                 </a>
+                                                @else
+                                                <a href="#" onclick="return alert('Cann\'t delete! This branch has transaction!')"  class="btn" style="height: 30px; width: 30px;" title="Delete">
+                                                    <img src="{{ asset('assets/backend/app-assets/icon/delete-icon.png')}}" style=" height: 30px; width: 30px; margin-left: -12px;">
+                                                </a>
+                                                @endif
+                                                
                                             </div>
                                          </td>
                                     </tr>

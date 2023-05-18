@@ -5,6 +5,8 @@ namespace App\Http\Controllers\backend;
 use App\CostCenterType;
 use App\Http\Controllers\Controller;
 use App\PartyInfo;
+use App\SalesPerson;
+use App\SalesRegion;
 use Illuminate\Http\Request;
 
 class PartyInfoController extends Controller
@@ -38,11 +40,15 @@ class PartyInfoController extends Controller
         $costTypes=CostCenterType::get();
         $partyInfos = PartyInfo::where('pi_type','!=', "Draft")->orderBy('id','DESC')->paginate(25);
         $partyInfosPDF = PartyInfo::where('pi_type','!=', "Draft")->orderBy('id','DESC')->get();
-        return view('backend.partyInfo.partyCenterDetails', compact('partyInfos','costTypes','cc','partyInfosPDF'));
+        $salesPersons= SalesPerson::all();
+        $salesRegions= SalesRegion::all();
+        return view('backend.partyInfo.partyCenterDetails', compact('partyInfos','costTypes','cc','partyInfosPDF','salesPersons','salesRegions'));
     }
 
     public function partyInfoPost(Request $request)
     {
+        // return $request;
+        
         $request->validate([
             'pi_name' => 'required',
             'pi_type'        => 'required',
@@ -94,6 +100,10 @@ class PartyInfoController extends Controller
         }else{
             $draftCost->credit_limit = 0;
         }
+
+        $draftCost->sales_person_id = $request->sales_person !=null ? $request->sales_person : 0;
+        $draftCost->sales_region_id = $request->sales_region !=null ? $request->sales_region : 0; 
+
         $sv=$draftCost->save();
 
         return redirect()->route('partyInfoDetails')->with('success', 'Added Successfully');
@@ -112,11 +122,14 @@ class PartyInfoController extends Controller
 
         $partyInfos = PartyInfo::where('pi_type','!=', "Draft")->orderBy('id','DESC')->paginate(25);
         $partyInfosPDF = PartyInfo::where('pi_type','!=', "Draft")->orderBy('id','DESC')->get();
-        return view('backend.partyInfo.partyCenterDetailsEdit', compact('partyInfos', 'partyInfo','costTypes','partyInfosPDF'));
+        $salesPersons= SalesPerson::all();
+        $salesRegions= SalesRegion::all();
+        return view('backend.partyInfo.partyCenterDetailsEdit', compact('partyInfos', 'partyInfo','costTypes','partyInfosPDF','salesPersons','salesRegions'));
     }
 
     public function partyInfoUpdate(Request $request, $costCenter)
     {
+        // return $request;
         $request->validate([
             'pi_name' => 'required',
             'pi_type'        => 'required',
@@ -147,6 +160,8 @@ class PartyInfoController extends Controller
         }else{
             $partyInfo->credit_limit = 0;
         }
+        $partyInfo->sales_person_id = $request->sales_person !=null ? $request->sales_person : 0;
+        $partyInfo->sales_region_id = $request->sales_region !=null ? $request->sales_region : 0;
         $partyInfo->save();
         return back()->with('success', 'Updated Successfully');
     }

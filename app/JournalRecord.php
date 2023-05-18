@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class JournalRecord extends Model
 {
+    protected $guarded = [];  
+    
     public function journal(){
         return $this->belongsTo(Journal::class);
     }

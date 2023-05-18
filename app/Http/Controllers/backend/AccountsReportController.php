@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\backend;
 
+use App\DeliveryItem;
+use App\DeliveryNote;
 use App\EstimateDetail;
 use App\Http\Controllers\Controller;
 use App\Invoice;
@@ -19,11 +21,15 @@ use Illuminate\Support\Facades\DB;
 use App\Exports\InvoiceExport;
 use App\Exports\PurchaseDetailsExport;
 use App\Exports\PurchaseExport;
+use App\Imports\TrialBalanceImport;
 use App\Journal;
+use App\JournalRecord;
 use App\ProjectDetail;
+use App\SaleReturn;
 use Facade\FlareClient\Http\Response;
 use Illuminate\Support\Facades\App;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
 class AccountsReportController extends Controller
@@ -413,7 +419,140 @@ class AccountsReportController extends Controller
         return view('backend.payables.expenses-by-project',compact('projects'));
     }
 
+    public function sales_return_details(Request $request){
+        $invoicess=SaleReturn::groupBy('invoice_no')->selectRaw('invoice_no, sum(quantity) as total_quantity, sum(net_amount) as total_net_amount')->get();
+        return view('backend.receivableReport.sales-return-details',compact('invoicess'));
+    }
+    public function delivery_challan_details(Request $request){
+        $invoicess = DeliveryNote::orderBy('id', 'desc')->get();
+        return view('backend.receivableReport.delivery-challan-details',compact('invoicess'));
+    }
+    public function delivery_challan_view(Request $request){
+        $delivery_note = DeliveryNote::find($request->id);
+        $items = DeliveryItem::where('delivery_note_id', $delivery_note->id)->get();
+        return view('backend.receivableReport.delivery-challan-view',compact('delivery_note', 'items'));
+    }
+    public function expenses_by_employee(Request $reports){
+        // $employees =
+        return view('backend.payables.expenses-by-employee');
+    }
+
     // Mominul Report End
 
+    public function import_trial_balance(Request $request){
+        $data= Excel::import(new TrialBalanceImport(), $request->xlfile);
+        return back()->with('success','Imported Successfully');
+    }
 
+    public function year_end_retained_earnings(){
+        // return "Alhamdulillah";
+        // AccountHead::where('account_type_id',4)->where()->first();
+        $startDate = Carbon::createFromFormat('Y-m-d', '2022-01-01');
+        $endDate = Carbon::createFromFormat('Y-m-d', '2023-12-31');
+
+        $incomes = DB::table('journal_records as jr')
+        ->join('master_accounts as ma', 'ma.id', '=', 'jr.master_account_id')
+        ->where('ma.account_type_id', '=', 3)
+        ->whereBetween('jr.journal_date', [$startDate, $endDate])
+        ->get();
+
+        $total_income= $incomes->sum('total_amount');
+
+        $expenses = DB::table('journal_records as jr')
+        ->join('master_accounts as ma', 'ma.id', '=', 'jr.master_account_id')
+        ->where('ma.account_type_id', '=', 4)
+        ->whereBetween('jr.journal_date', [$startDate, $endDate])
+        ->get();
+
+        $total_expense= $expenses->sum('total_amount');
+        $retained_earnings= $total_income - $total_expense;
+
+        $sub_invoice = Carbon::now()->format('Ymd');
+        $latest_journal_no = Journal::withTrashed()->whereDate('created_at', Carbon::today())->where('journal_no', 'LIKE', "%{$sub_invoice}%")->latest()->first();
+        if ($latest_journal_no) {
+            $journal_no = substr($latest_journal_no->journal_no,0,-1);
+            $journal_code = $journal_no + 1;
+            $journal_no = $journal_code . "J";
+        } else {
+            $journal_no = Carbon::now()->format('Ymd') . '001' . "J";
+        }
+
+        // $journal= new Journal();
+        // $journal->project_id        = 0;
+        // $journal->journal_no        = $journal_no;
+        // $journal->date              = Carbon::today();
+        // $journal->pay_mode          = 'Cash';
+        // $journal->invoice_no        = '1234';
+        // $journal->cost_center_id    = 0;
+        // $journal->party_info_id     = 0;
+        // $journal->account_head_id   = 123;
+        // $journal->amount            = $retained_earnings;
+        // $journal->tax_rate          = 0;
+        // $journal->vat_amount        = 0;
+        // $journal->total_amount      = $retained_earnings;
+        // $journal->narration         = 'Year closing retained earnings';
+        // $journal->created_by        = Auth::id();
+        // $journal->save();
+
+        foreach($incomes as $each_income){
+            $jl_record= new JournalRecord();
+            $jl_record->journal_id          = 0;
+            $jl_record->project_details_id  = $each_income->project_details_id;
+            $jl_record->cost_center_id      = $each_income->cost_center_id;
+            $jl_record->party_info_id       = $each_income->party_info_id;
+            $jl_record->journal_no          = 'closing';
+            $jl_record->account_head_id     = $each_income->account_head_id;
+            $jl_record->master_account_id   = $each_income->master_account_id;
+            $jl_record->account_head        = $each_income->account_head;
+            $jl_record->amount              = $each_income->amount;
+            $jl_record->total_amount        = $each_income->total_amount;
+            $jl_record->vat_rate_id         = $each_income->vat_rate_id;
+            $jl_record->transaction_type    = 'DR';
+            $jl_record->journal_date        = Carbon::createFromFormat('Y-m-d', '2023-01-01');
+            $jl_record->is_main_head        = 1;
+            $jl_record->save();
+        }
+
+        foreach($expenses as $each_expense){
+            $jl_record= new JournalRecord();
+            $jl_record->journal_id          = 0;
+            $jl_record->project_details_id  = $each_expense->project_details_id;
+            $jl_record->cost_center_id      = $each_expense->cost_center_id;
+            $jl_record->party_info_id       = $each_expense->party_info_id;
+            $jl_record->journal_no          = 'closing';
+            $jl_record->account_head_id     = $each_expense->account_head_id;
+            $jl_record->master_account_id   = $each_expense->master_account_id;
+            $jl_record->account_head        = $each_expense->account_head;
+            $jl_record->amount              = $each_expense->amount;
+            $jl_record->total_amount        = $each_expense->total_amount;
+            $jl_record->vat_rate_id         = $each_expense->vat_rate_id;
+            $jl_record->transaction_type    = 'CR';
+            $jl_record->journal_date        = Carbon::createFromFormat('Y-m-d', '2023-01-01');
+            $jl_record->is_main_head        = 1;
+            $jl_record->save();
+        }
+
+        $retained_earning= AccountHead::find(258);
+        $jl_record= new JournalRecord();
+        $jl_record->journal_id          = 0;
+        $jl_record->project_details_id  = 1;
+        $jl_record->cost_center_id      = 1;
+        $jl_record->party_info_id       = 0;
+        $jl_record->journal_no          = 'closing';
+        $jl_record->account_head_id     = $retained_earning->id;
+        $jl_record->master_account_id   = $retained_earning->master_account_id;
+        $jl_record->account_head        = $retained_earning->fld_ac_head;
+        $jl_record->amount              = $retained_earnings;
+        $jl_record->total_amount        = $retained_earnings;
+        $jl_record->vat_rate_id         = 0;
+        $jl_record->transaction_type    = 'CR';
+        $jl_record->journal_date        = Carbon::createFromFormat('Y-m-d', '2023-01-01');
+        $jl_record->is_main_head        = 1;
+        $jl_record->save();
+
+        return back()->with('success','Closing Journal Created!');
+    }
+
+
+    
 }

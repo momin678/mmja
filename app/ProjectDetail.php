@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\CostCenter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -69,4 +70,21 @@ class ProjectDetail extends Model
     public function journalCount(){
         return $this->hasMany(JournalRecord::class, 'project_details_id')->where('transaction_type', 'DR');
     }
+
+    public function tempJournal(){
+        $all= $this->hasMany(JournalTemp::class, 'project_id')->get();
+        return $all->count();
+    }
+
+    public function journalEntryCount(){
+        $all= $this->hasMany(Journal::class, 'project_id')->get();
+        return $all->count();
+    }
+
+    public function costCenterCount(){
+        $all= $this->hasMany(CostCenter::class, 'project_id')->get();
+        return $all->count();
+    }
+
+    
 }

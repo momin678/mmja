@@ -46,12 +46,14 @@
                                     <strong>:</strong> {{ $journal->project->proj_name}}
                                 </div>
 
+                                @if (isset($journal->costCenter->cc_name))
                                 <div class="col-5">
                                     <strong>Cost Center</strong>
                                 </div>
                                 <div class="col-7">
                                     <strong>:</strong> {{ $journal->costCenter->cc_name}}
-                                </div>
+                                </div> 
+                                @endif
 
                                 <div class="col-5">
                                     <strong>Party</strong>

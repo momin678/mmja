@@ -15,7 +15,7 @@
                     <section id="widgets-Statistics" class="mr-1 ml-1 mb-1">
                         <div class="row">
                             <div class="col-md-6  mt-2 mb-2">
-                                <h4>Cost Center Details</h4>
+                                <h4>Cost Center Detailsd</h4>
                             </div>
                                 {{-- @include('alerts.alerts') --}}
                         </div>
@@ -145,7 +145,14 @@
                                             <td style="padding-bottom: 11px; padding-top: 0px">
                                                <div class="d-flex justify-content-end">
                                                 <a href="{{ route('costCenEdit', $cCenter) }}" class="btn" style="height: 30px; width: 30px;" title="Eidt"><img src="{{ asset('assets/backend/app-assets/icon/edit-icon.png')}}" style=" height: 30px; width: 30px;"></a>
+                                                
+                                                @if ($cCenter->journalCount()==0 && $cCenter->tempJournal()==0)
                                                 <a href="{{ route('costCenDelete',$cCenter) }}" onclick="return confirm('about to delete master account. Please, Confirm?')"  class="btn" style="height: 30px; width: 30px;" title="Delete"><img src="{{ asset('assets/backend/app-assets/icon/delete-icon.png')}}" style=" height: 30px; width: 30px; margin-left: -12px;"></a>
+                                                @else
+                                                <a href="#" onclick="return alert('Cannot Delete! This belongs to some transactions.')"  class="btn" style="height: 30px; width: 30px;" title="Delete"><img src="{{ asset('assets/backend/app-assets/icon/delete-icon.png')}}" style=" height: 30px; width: 30px; margin-left: -12px;"></a>
+                                                
+                                                @endif
+
                                                </div>
         
                                             </td>

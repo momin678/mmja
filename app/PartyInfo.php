@@ -54,4 +54,31 @@ class PartyInfo extends Model
         return $this->hasMany(JournalRecord::class, 'party_info_id')->where('transaction_type', 'DR');
     }
 
+    public function tempJournal(){
+        $all= $this->hasMany(JournalTemp::class, 'project_id')->get();
+        return $all->count();
+    }
+
+    public function journalCount(){
+        $all= $this->hasMany(Journal::class, 'project_id')->get();
+        return $all->count();
+    }
+
+    public function sales_count(){
+        $all= $this->hasMany(Invoice::class, 'customer_name', 'pi_code')->get();
+        return $all->count();
+    }
+
+    public function sales_amount(){
+        $all= $this->hasMany(Invoice::class, 'customer_name', 'pi_code')->get();
+        return $all->sum('total_amount');
+    }
+
+    public function sales_with_tax(){
+        $all= $this->hasMany(Invoice::class, 'customer_name', 'pi_code')->get();
+        return $all->sum('grand_total');
+    }
+
+
+
 }

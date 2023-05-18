@@ -44,7 +44,7 @@
 
                                             <div class="col-md-2 changeColStyle">
                                                 <label>Party Type</label>
-                                                <select name="pi_type" class="common-select2" style="width: 100% !important" id="" required>
+                                                <select name="pi_type" class="common-select2" style="width: 100% !important" id="pi_type" required>
                                                 <option value="">Select...</option>
                                                     @foreach ($costTypes as $item)
                                                 <option value="{{ $item->title }}"{{ isset($partyInfo) ? ($partyInfo->pi_type == $item->title ? 'selected' : '') : '' }}> {{ $item->title }}</option>
@@ -102,7 +102,38 @@
                                                 <div class="btn btn-sm btn-danger">{{ $message }}</div>
                                                     @enderror
                                             </div>
-                                        
+
+                                            <div class="col-md-2 changeColStyle" >
+                                                <label>Sales Region</label>
+                                                <select name="sales_region" class="common-select2" style="width: 100% !important" id="sales_region{{$partyInfo->sales_region_id}}">
+                                                    <option value="">Select...</option>
+                                                        @foreach ($salesRegions as $region)
+                                                    <option value="{{ $region->id }}" {{ isset($partyInfo) ? ($partyInfo->sales_region_id == $region->id ? 'selected' : '') : '' }}> {{ $region->name }}</option>
+                                                        @endforeach
+                                                </select>
+                                                @error('sales_region')
+                                                <div class="btn btn-sm btn-danger">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            
+                                            <div class="col-md-3 changeColStyle" id="credit_limit" @if (!($partyInfo->pi_type == 'Customer')) style="display: none;" @endif >
+                                                <label>Credit Limit</label>
+                                                <input type="number" class="form-control inputFieldHeight" id="input_credit_limit" name="credit_limit" value="{{ $partyInfo->credit_limit }}" placeholder="Customer credit Limit">
+                                            </div>
+
+                                            <div class="col-md-3 changeColStyle" id="sales_person_div" @if (!($partyInfo->pi_type == 'Customer')) style="display: none;" @endif>
+                                                <label>Sales Person</label>
+                                                <select name="sales_person" class="common-select2" style="width: 100% !important" id="sales_person">
+                                                    <option value="">Select...</option>
+                                                        @foreach ($salesPersons as $person)
+                                                    <option value="{{ $person->id }}" {{ isset($partyInfo) ? ($partyInfo->sales_person_id == $person->id ? 'selected' : '') : '' }}> {{ $person->name }}</option>
+                                                        @endforeach
+                                                </select>
+                                                @error('sales_person')
+                                                <div class="btn btn-sm btn-danger">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+
                                                 <div class="col-12 d-flex justify-content-end changeColStyle">
                                                     @isset($partyInfo)
                                                     <a href="{{ route('partyInfoDetails') }}" class="btn btn-info mr-1 formButton "><img src="{{ asset('assets/backend/app-assets/icon/add-icon.png')}}" alt="" srcset="" class="image-fluid" width="25"> New</a>
@@ -272,6 +303,42 @@
             // document.getElementById("mPrintHidden").style.display = "block";
             window.print();
         }
+    </script>
+    <script>
+        let pi_type = document.getElementById("pi_type");
+        let credit_limit = document.getElementById("credit_limit");
+        let input_credit_limit = document.getElementById("input_credit_limit");
+        $("#pi_type").change(function (e) { 
+            e.preventDefault();
+            console.log(this.value);
+            if(this.value == "Customer"){
+                if (credit_limit.style.display === "none") {
+                    credit_limit.style.display = "block";
+                    input_credit_limit.setAttribute("required", "");
+
+                    sales_person_div.style.display = "block";
+                    sales_person.setAttribute("required", "");
+                    sales_person.value = "";
+
+                } else {
+                    credit_limit.style.display = "none";
+                    input_credit_limit.removeAttribute("required");
+                    input_credit_limit.value = "";
+
+                    sales_person_div.style.display = "none";
+                    sales_person.removeAttribute("required");
+                    sales_person.value = "";
+                }
+            }else{
+                credit_limit.style.display = "none";
+                input_credit_limit.removeAttribute("required");
+                input_credit_limit.value = "";
+
+                sales_person_div.style.display = "none";
+                sales_person.removeAttribute("required");
+                sales_person.value = "";
+            }
+        })
     </script>
 @endpush
 

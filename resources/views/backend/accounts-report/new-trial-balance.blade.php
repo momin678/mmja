@@ -72,6 +72,7 @@
                                     <div class="d-flex">
                                         <h4 class="card-title flex-grow-1">Trial Balance</h4>
                                         <div>
+                                            
                                             <button type="button" class="btn mExcelButton formButton mr-1" title="Export" onclick="exportTableToCSV('trial-balance-{{ date('d M Y') }}.csv')">
                                                 <div class="d-flex">
                                                     <div class="formSaveIcon">
@@ -91,7 +92,7 @@
                                         </div>
                                     </div>
                                     <div class="d-flex">
-                                        <div class="col-md-5">
+                                        <div class="col-md-4">
                                             <form action="{{ route('new-trial-balance-date') }}" method="GET" class="d-flex row">
                                                 <div class="row form-group col-md-8">
                                                     <input type="text" class="inputFieldHeight form-control" name="date"  placeholder="Select Date" onfocus="(this.type='date')" id="date" required>
@@ -108,7 +109,7 @@
                                                 </div>
                                             </form>
                                         </div>
-                                        <div class="col-md-7 padding-right">
+                                        <div class="col-md-6 padding-right">
                                             <form action="{{ route('new-trial-balance-date-range') }}" method="GET" >
                                                 <div class="d-flex">
                                                     <div class="col-md-5 ">
@@ -118,7 +119,7 @@
                                                         <input type="text" class="inputFieldHeight form-control" name="to"
                                                         placeholder="To" value="{{ isset($searchDateto)? $searchDateto:"" }}" onfocus="(this.type='date')" id="to" required>
                                                     </div>
-                                                    <div class="col-md-3 text-right" style="padding-right: 0;">
+                                                    <div class="col-md-3 text-right" >
                                                         <button type="submit" class="btn mSearchingBotton mb-2 formButton" title="Search" >
                                                             <div class="d-flex">
                                                                 <div class="formSaveIcon">
@@ -128,6 +129,25 @@
                                                             </div>
                                                         </button>
                                                     </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <form action="{{ route('import-trial-balance') }}" method="POST" enctype="multipart/form-data" class="d-flex row">
+                                                @csrf
+                                                <div class="row form-group col-md-8">
+                                                    <input type="file" class="inputFieldHeight form-control" name="xlfile" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    
+                                                    <button type="submit" class="btn mExcelButton formButton mr-1" title="Import">
+                                                        <div class="d-flex">
+                                                            <div class="formSaveIcon">
+                                                                <img src="{{asset('assets/backend/app-assets/icon/excel-icon.png')}}" width="25">
+                                                            </div>
+                                                            <div><span>Import</span></div>
+                                                        </div>
+                                                    </button>
                                                 </div>
                                             </form>
                                         </div>
@@ -158,7 +178,7 @@
                                     @foreach (App\JournalRecord::distinct()->get('master_account_id') as $unique_master_ac)
         
                                     <tr>                                
-                                        <th>{{$unique_master_ac->master_ac->mst_definition}}</th>
+                                        <th>{{$unique_master_ac->master_ac->mst_ac_head}}</th>
                                         <th></th>
                                         <th class="text-right"></th>
                                         <th class="text-right"></th>
@@ -199,8 +219,8 @@
                                             <tr>
                                                 <td>{{$account_head_id->ac_head->fld_ac_head}}</td>
                                                 <td></td>
-                                                <td>{{$debit_balance}}</td>
-                                                <td>{{$credit_balance}}</td>
+                                                <td class="text-right">{{$debit_balance}}</td>
+                                                <td class="text-right">{{$credit_balance}}</td>
                                             </tr>
         
                                         @endforeach

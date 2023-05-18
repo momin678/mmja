@@ -122,6 +122,12 @@
                             <div class="col-7">
                                 <strong>:</strong> {{ $pInfo->email }}
                             </div>
+                            <div class="col-5">
+                                <strong>Credit Limit</strong>
+                            </div>
+                            <div class="col-7">
+                                <strong>:</strong> {{ $pInfo->credit_limit }}
+                            </div>
                         </div>
                     </div>
 

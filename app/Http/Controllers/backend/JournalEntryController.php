@@ -41,6 +41,11 @@ class JournalEntryController extends Controller
         return view('backend.journal.index', compact('journals'));
     }
 
+    public function check_account_head(Request $request){
+        $account_head= AccountHead::find($request->account_head_id);
+        return $account_head->account_type_id;
+    }
+
     public function preview($id){
         $journal= JournalTemp::find($id);
         return view('backend.journal.preview', compact('journal'));
@@ -262,7 +267,6 @@ class JournalEntryController extends Controller
                 'journal_no'        =>  'required',
                 'date'              =>  'required',
                 'invoice_no'        =>  'required',
-                'cc_code'           => 'required',
                 'party_info'        => 'required',
                 'pay_mode'          => 'required',
                 'narration'         => 'required'
@@ -272,7 +276,6 @@ class JournalEntryController extends Controller
                 'journal_no.required'   => 'Journal No is required',
                 'date.required'         => 'Date is required',
                 'invoice_no.required'   => 'nvoice No is required',
-                'cc_code.required'      => 'Cost Center is required',
                 'party_info.required'   => 'Party Info is required',
                 'pay_mode.required'     => 'Pay Mode is required',
                 'narration.required'    => 'Narration is required',
@@ -300,7 +303,13 @@ class JournalEntryController extends Controller
             $ext= $voucher_scan->getClientOriginalExtension();
             $voucher_file_name= $name.time().'.'.$ext;
             $voucher_scan->storeAs( 'public/upload/documents', $voucher_file_name);
-        }        
+        }
+        
+        $cost_center_id=0;
+        if($request->cost_center_name != null){
+            $cost_center_id= $request->cost_center_name;
+        }
+
 
 
         $sub_invoice = Carbon::now()->format('Ymd');
@@ -323,7 +332,7 @@ class JournalEntryController extends Controller
         $journal->date              = $request->date;
         $journal->pay_mode          = $request->pay_mode;
         $journal->invoice_no        = $request->invoice_no;
-        $journal->cost_center_id    = $request->cost_center_name;
+        $journal->cost_center_id    = $cost_center_id;
         $journal->party_info_id     = $request->party_info;
         $journal->account_head_id   = 123;
         $journal->amount            = $total_amount;
@@ -356,7 +365,7 @@ class JournalEntryController extends Controller
                 $jl_record= new JournalRecordsTemp();
                 $jl_record->journal_temp_id     = $journal->id;
                 $jl_record->project_details_id  = $request->project;
-                $jl_record->cost_center_id      = $request->cost_center_name;
+                $jl_record->cost_center_id      = $cost_center_id;
                 $jl_record->party_info_id       = $request->party_info;
                 $jl_record->journal_no          = $journal_no;
                 $jl_record->account_head_id     = $each_head['multi_acc_head'];
@@ -381,7 +390,7 @@ class JournalEntryController extends Controller
                 $jl_record= new JournalRecordsTemp();
                 $jl_record->journal_temp_id     = $journal->id;
                 $jl_record->project_details_id  = $request->project;
-                $jl_record->cost_center_id      = $request->cost_center_name;
+                $jl_record->cost_center_id      = $cost_center_id;
                 $jl_record->party_info_id       = $request->party_info;
                 $jl_record->journal_no          = $journal_no;
                 $jl_record->account_head_id     = $each_head['multi_acc_head'];
@@ -404,7 +413,7 @@ class JournalEntryController extends Controller
             $jl_record= new JournalRecordsTemp();
             $jl_record->journal_temp_id     = $journal->id;
             $jl_record->project_details_id  = $request->project;
-            $jl_record->cost_center_id      = $request->cost_center_name;
+            $jl_record->cost_center_id      = $cost_center_id;
             $jl_record->party_info_id       = $request->party_info;
             $jl_record->journal_no          = $journal_no;
             $jl_record->account_head_id     = $vat_ac_head->id;
@@ -426,7 +435,7 @@ class JournalEntryController extends Controller
             $jl_record= new JournalRecordsTemp();
             $jl_record->journal_temp_id     = $journal->id;
             $jl_record->project_details_id  = $request->project;
-            $jl_record->cost_center_id      = $request->cost_center_name;
+            $jl_record->cost_center_id      = $cost_center_id;
             $jl_record->party_info_id       = $request->party_info;
             $jl_record->journal_no          = $journal_no;
             $jl_record->account_head_id     = $ac_head->id;
@@ -442,17 +451,17 @@ class JournalEntryController extends Controller
         
         }elseif($request->pay_mode=='Credit'){
             if($type=='DR'){
-                $ac_head= AccountHead::find(35); // accounts payable
+                $ac_head= AccountHead::find(33); // accounts payable
                 $opposit_type='CR';
             }else{
-                $ac_head= AccountHead::find(33); // accounts receivable
+                $ac_head= AccountHead::find(34); // accounts receivable
                 $opposit_type='DR';
             }
 
             $jl_record= new JournalRecordsTemp();
             $jl_record->journal_temp_id     = $journal->id;
             $jl_record->project_details_id  = $request->project;
-            $jl_record->cost_center_id      = $request->cost_center_name;
+            $jl_record->cost_center_id      = $cost_center_id;
             $jl_record->party_info_id       = $request->party_info;
             $jl_record->journal_no          = $journal_no;
             $jl_record->account_head_id     = $ac_head->id;
@@ -480,7 +489,7 @@ class JournalEntryController extends Controller
             $jl_record= new JournalRecordsTemp();
             $jl_record->journal_temp_id     = $journal->id;
             $jl_record->project_details_id  = $request->project;
-            $jl_record->cost_center_id      = $request->cost_center_name;
+            $jl_record->cost_center_id      = $cost_center_id;
             $jl_record->party_info_id       = $request->party_info;
             $jl_record->journal_no          = $journal_no;
             $jl_record->account_head_id     = $request->acc_head_2;
@@ -511,34 +520,19 @@ class JournalEntryController extends Controller
         $journal->voucher_type          = $voucher_type;
         $journal->save();
 
-        // $dr_cr_voucher= new DebitCreditVoucher;
-        // $dr_cr_voucher->journal_id      = $journal->id;
-        // $dr_cr_voucher->project_id      = $request->project;
-        // $dr_cr_voucher->cost_center_id  = $request->cost_center_name;
-        // $dr_cr_voucher->party_info_id   = $request->party_info;
-        // $dr_cr_voucher->account_head_id = 0;
-        // $dr_cr_voucher->pay_mode        = $request->pay_mode;
-        // $dr_cr_voucher->amount          = $total_amount_withvat;
-        // $dr_cr_voucher->narration       = $request->narration;
-        // $dr_cr_voucher->type            = $voucher_type;
-        // $dr_cr_voucher->date            = $request->date;
-        // $dr_cr_voucher->save();
-
+        
         return redirect()->route('journal-success', $journal->id)->with('success',"Successfully Added");
     }
 
     public function journalEntryEditPost(Request $request,$journal)
     {
         // return $request;
-        // return $journal;
-
         
         $request->validate(
             [
                 'project'           => 'required',
                 'date'              =>  'required',
                 'invoice_no'        =>  'required',
-                'cc_code'           => 'required',
                 'party_info'        => 'required',
                 'pay_mode'          => 'required',
                 'narration'         => 'required'
@@ -547,7 +541,6 @@ class JournalEntryController extends Controller
                 'project.required'      => 'Project Name is required',
                 'date.required'         => 'Date is required',
                 'invoice_no.required'   => 'nvoice No is required',
-                'cc_code.required'      => 'Cost Center is required',
                 'party_info.required'   => 'Party Info is required',
                 'pay_mode.required'     => 'Pay Mode is required',
                 'narration.required'    => 'Narration is required',
@@ -599,8 +592,12 @@ class JournalEntryController extends Controller
             $ext= $voucher_scan->getClientOriginalExtension();
             $voucher_file_name= $name.time().'.'.$ext;
             $voucher_scan->storeAs( 'public/upload/documents', $voucher_file_name);
-        }        
-
+        }
+        
+        $cost_center_id=0;
+        if($request->cost_center_name != null){
+            $cost_center_id= $request->cost_center_name;
+        }
 
         $journal= JournalTemp::find($journal);
         $journal_no= $journal->journal_no;
@@ -611,7 +608,7 @@ class JournalEntryController extends Controller
         $journal->date              = $request->date;
         $journal->pay_mode          = $request->pay_mode;
         $journal->invoice_no        = $request->invoice_no;
-        $journal->cost_center_id    = $request->cost_center_name;
+        $journal->cost_center_id    = $cost_center_id;
         $journal->party_info_id     = $request->party_info;
         $journal->account_head_id   = 123;
         $journal->amount            = $total_amount;
@@ -647,7 +644,7 @@ class JournalEntryController extends Controller
                 $jl_record= new JournalRecordsTemp();
                 $jl_record->journal_temp_id     = $journal->id;
                 $jl_record->project_details_id  = $request->project;
-                $jl_record->cost_center_id      = $request->cost_center_name;
+                $jl_record->cost_center_id      = $cost_center_id;
                 $jl_record->party_info_id       = $request->party_info;
                 $jl_record->journal_no          = $journal_no;
                 $jl_record->account_head_id     = $each_head['multi_acc_head'];
@@ -672,7 +669,7 @@ class JournalEntryController extends Controller
                 $jl_record= new JournalRecordsTemp();
                 $jl_record->journal_temp_id     = $journal->id;
                 $jl_record->project_details_id  = $request->project;
-                $jl_record->cost_center_id      = $request->cost_center_name;
+                $jl_record->cost_center_id      = $cost_center_id;
                 $jl_record->party_info_id       = $request->party_info;
                 $jl_record->journal_no          = $journal_no;
                 $jl_record->account_head_id     = $each_head['multi_acc_head'];
@@ -695,7 +692,7 @@ class JournalEntryController extends Controller
             $jl_record= new JournalRecordsTemp();
             $jl_record->journal_temp_id     = $journal->id;
             $jl_record->project_details_id  = $request->project;
-            $jl_record->cost_center_id      = $request->cost_center_name;
+            $jl_record->cost_center_id      = $cost_center_id;
             $jl_record->party_info_id       = $request->party_info;
             $jl_record->journal_no          = $journal_no;
             $jl_record->account_head_id     = $vat_ac_head->id;
@@ -717,7 +714,7 @@ class JournalEntryController extends Controller
             $jl_record= new JournalRecordsTemp();
             $jl_record->journal_temp_id     = $journal->id;
             $jl_record->project_details_id  = $request->project;
-            $jl_record->cost_center_id      = $request->cost_center_name;
+            $jl_record->cost_center_id      = $cost_center_id;
             $jl_record->party_info_id       = $request->party_info;
             $jl_record->journal_no          = $journal_no;
             $jl_record->account_head_id     = $ac_head->id;
@@ -733,17 +730,17 @@ class JournalEntryController extends Controller
         
         }elseif($request->pay_mode=='Credit'){
             if($type=='DR'){
-                $ac_head= AccountHead::find(35); // accounts payable
+                $ac_head= AccountHead::find(33); // accounts payable
                 $opposit_type='CR';
             }else{
-                $ac_head= AccountHead::find(33); // accounts receivable
+                $ac_head= AccountHead::find(34); // accounts receivable
                 $opposit_type='DR';
             }
 
             $jl_record= new JournalRecordsTemp();
             $jl_record->journal_temp_id     = $journal->id;
             $jl_record->project_details_id  = $request->project;
-            $jl_record->cost_center_id      = $request->cost_center_name;
+            $jl_record->cost_center_id      = $cost_center_id;
             $jl_record->party_info_id       = $request->party_info;
             $jl_record->journal_no          = $journal_no;
             $jl_record->account_head_id     = $ac_head->id;
@@ -771,7 +768,7 @@ class JournalEntryController extends Controller
             $jl_record= new JournalRecordsTemp();
             $jl_record->journal_temp_id     = $journal->id;
             $jl_record->project_details_id  = $request->project;
-            $jl_record->cost_center_id      = $request->cost_center_name;
+            $jl_record->cost_center_id      = $cost_center_id;
             $jl_record->party_info_id       = $request->party_info;
             $jl_record->journal_no          = $journal_no;
             $jl_record->account_head_id     = $request->acc_head_2;

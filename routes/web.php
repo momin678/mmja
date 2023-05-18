@@ -216,6 +216,8 @@ Route::get('tarek-invo-update/{invoice}', 'backend\TaxInvoiceController@tarekInv
     Route::get('/journal-approve/{journal}', 'backend\JournalEntryController@journalMakeApprove')->name('journalMakeApprove');
     Route::post('journal/approve-decline/{journal}', 'backend\JournalEntryController@journaApproveDecline')->name('journaApproveDecline');
     Route::get('/journal-approval', 'backend\JournalEntryController@journalApproval')->name('journalApproval');
+
+    Route::post('check-account-head', 'backend\JournalEntryController@check_account_head')->name('check-account-head');
     //End Journal Entry
 
 
@@ -580,6 +582,20 @@ Route::get('stock-summary-report', 'backend\InventoryReportController@stock_summ
 Route::get('product-sales-cost', 'backend\InventoryReportController@product_sales_cost')->name('product-sales-cost');
 Route::get('abc-classification', 'backend\InventoryReportController@abc_classification')->name('abc-classification');
 
+Route::get('sales-report-by-customer', 'backend\SalesReportController@sales_by_customer')->name('sales-report-by-customer');
+Route::get('sales-report-by-customer/{id}', 'backend\SalesReportController@sales_by_customer_one')->name('sales-report-by-customer-one');
+Route::get('sales-by-item', 'backend\SalesReportController@sales_by_item')->name('sales-by-item');
+Route::get('sales-report-by-person', 'backend\SalesReportController@sales_by_person')->name('sales-report-by-person');
+Route::get('sales-report-by-region', 'backend\SalesReportController@sales_by_region')->name('sales-report-by-region');
+
+// Sales Person
+Route::resource('sales-person','backend\SalesPersonController');
+Route::resource('sales-region','backend\SalesRegionController');
+
+Route::post('import-trial-balance', 'backend\AccountsReportController@import_trial_balance')->name('import-trial-balance');
+Route::get('year-end-earning', 'backend\AccountsReportController@year_end_retained_earnings')->name('year-end-earning');
+
+
 
 // Mominul Accounts Report
 Route::get('tax-invoice-detail', 'backend\AccountsReportController@tax_invoice_detail')->name('tax-invoice-detail');
@@ -612,6 +628,12 @@ Route::resource('estimate-list', 'backend\EstimateDetailsController');
 Route::get('estimate-details', 'backend\AccountsReportController@estimate_details')->name('estimate-details');
 Route::get('expenses-by-project', 'backend\AccountsReportController@expenses_by_project')->name('expenses-by-project');
 
+Route::get('findInvoice', 'backend\PayableReportController@findInvoice')->name('findInvoice');
+Route::get('sales-return-details', 'backend\AccountsReportController@sales_return_details')->name('sales-return-details');
+Route::get('delivery-challan-details', 'backend\AccountsReportController@delivery_challan_details')->name('delivery-challan-details');
+Route::post('delivery-challan-view', 'backend\AccountsReportController@delivery_challan_view')->name('delivery-challan-view');
+Route::get('expenses-by-employee', 'backend\AccountsReportController@expenses_by_employee')->name('expenses-by-employee');
+
 
 // Tarek Accounting Report
 //payable
@@ -621,5 +643,13 @@ Route::get('ap-ageing-details', 'backend\PayableReportController@ap_ageing_detai
 Route::get('payable-summary', 'backend\PayableReportController@payable_summary')->name('payable-summary');
 Route::get('payable-details/{id}', 'backend\PayableReportController@payable_details')->name('payable-details');
 Route::get('payable-details-view', 'backend\PayableReportController@payable_details_view')->name('payable-details-view');
+
+
+Route::get('const-raw-meterial','backend\ItemListController@construction_raw_material')->name('const-raw-meterial');
+Route::POST('const-raw-meterial-store','backend\ItemListController@construction_raw_material_store')->name('const-raw-meterial-store');
+Route::get('const-raw-meterial-edit/{id}','backend\ItemListController@construction_raw_material_edit')->name('const-raw-meterial-edit');
+Route::POST('const-raw-meterial-update/{id}','backend\ItemListController@construction_raw_material_update')->name('const-raw-meterial-update');
+
+Route::get('const-raw-purchase','backend\ConstructionPurchaseController@index')->name('const-raw-purchase');
 
 });

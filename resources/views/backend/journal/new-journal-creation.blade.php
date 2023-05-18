@@ -102,7 +102,7 @@
                                             <input type="text" name="cc_code" id="cc_code"
                                                 value="{{ isset($journalF) ? $journalF->costCenter->cc_code : '' }}"
                                                 class="form-control inputFieldHeight" placeholder="CC Code"
-                                                required>
+                                                >
                                             @error('cc_code')
                                                 <div class="btn btn-sm btn-danger">{{ $message }}
                                                 </div>
@@ -111,7 +111,7 @@
                                         <div class="col-md-3 changeColStyle search-item">
                                             <label for="">Cost Center Name</label>
                                             <select name="cost_center_name" id="cost_center_name"
-                                            class="common-select2 party-info " style="width: 100% !important" data-target="" required>
+                                            class="common-select2 party-info " style="width: 100% !important" data-target="" >
                                                 <option value="">Select...</option>
                                                 @foreach ($cCenters as $item)
                                                     <option value="{{ $item->id }}"
@@ -422,6 +422,30 @@
                 $('.multi-tax-rate').select2();
             }, 1000);
         });
+
+        // on select multiple account head
+        $('.repeater-default').on("change", ".multi-acc-head", function(e) {
+            var account_head_id = $(this).val();
+            var _token = $('input[name="_token"]').val();
+            $.ajax({
+                url: "{{ route('check-account-head') }}",
+                method: "POST",
+                data: {
+                    account_head_id: account_head_id,
+                    _token: _token,
+                },
+                success: function(response) {
+                    if(response==3 || response==4){
+                        $('#cc_code').prop("required", true);
+                        $('#cost_center_name').prop("required", true);
+                    }else{
+                        $('#cc_code').prop("required", false);
+                        $('#cost_center_name').prop("required", false);
+                    }
+                }
+            })
+        });
+
         // on change amount
         $('.repeater-default').on("keyup", ".amount_withvat", function(e) {
             var amount = $(this).val();

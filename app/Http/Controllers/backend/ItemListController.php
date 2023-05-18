@@ -22,6 +22,7 @@ use App\PurchaseRequisitionDetail;
 use App\PurchaseRequisitionDetailTemp;
 use App\StockTransection;
 use App\Style;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ItemListController extends Controller
@@ -276,5 +277,83 @@ class ItemListController extends Controller
         $groups = Group::all();
         $styles = Style::all();
         return view('backend.item-list.items-download', compact('itme_lists', 'units', 'vatRates', 'brands', 'groups', 'styles'));
+    }
+
+    public function construction_raw_material(){
+        $itme_lists = ItemList::orderBy("barcode")->paginate(20);
+        $units = Unit::all();
+        $vatRates = VatRate::all();
+        return view('backend.item-list.const-raw-material', compact('itme_lists', 'units', 'vatRates'));
+    }
+
+    public function construction_raw_material_edit($id){
+        $item_info=ItemList::find($id);
+        // return $item;
+        $itme_lists = ItemList::orderBy("barcode")->paginate(20);
+        $units = Unit::all();
+        $vatRates = VatRate::all();
+        return view('backend.item-list.const-raw-material-edit', compact('itme_lists', 'units', 'vatRates','item_info'));
+    }
+
+    public function construction_raw_material_store(Request $request){
+        $request->validate([
+            'item_name' => 'required',
+            'unit' => 'required',
+            'description' => 'max:250',
+            
+        ]
+        );
+
+        $max_id= ItemList::max('id');
+        $newnum= $max_id+1;
+        $barcode= date('Ymd').$newnum;
+
+        $item_list = new ItemList();
+        
+        // $item_list->group_name = $group->group_name;
+        // $item_list->group_no = $group->group_no;
+        $item_list->barcode = $barcode;
+        $item_list->sku = 'FS'.$barcode;
+        // $item_list->style_id = $request->style_id;
+        $item_list->item_name = $request->item_name;
+        $item_list->brand_id = 0;
+        // $item_list->country = $request->country;
+        $item_list->unit = $request->unit;
+        $item_list->description = $request->description;
+        $item_list->sell_price = 0;
+        $item_list->vat_rate = 0;
+        $item_list->vat_amount = 0;
+        $item_list->total_amount = 0;
+        $item_list->save();
+        $notification= array(
+            'message'       => 'Item Saved successfully!',
+            'alert-type'    => 'success'
+        );
+        return redirect()->back()->with($notification);
+
+    }
+
+    public function construction_raw_material_update(Request $request, $id){
+        $request->validate([
+            'item_name' => 'required',
+            'unit' => 'required',
+            'description' => 'max:250',
+            
+        ]
+        );
+
+        
+        $item_list = ItemList::find($id);
+        
+        $item_list->item_name = $request->item_name;
+        $item_list->unit = $request->unit;
+        $item_list->description = $request->description;
+        $item_list->save();
+        $notification= array(
+            'message'       => 'Item updated successfully!',
+            'alert-type'    => 'success'
+        );
+        return redirect()->back()->with($notification);
+
     }
 }

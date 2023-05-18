@@ -273,8 +273,8 @@
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Sales Order Details</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('delivery-challan') ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="#">
+                        <li class="{{ Request::is('delivery-challan-details') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('delivery-challan-details')}}">
                                 <i class="bx bx-right-arrow-alt"></i>
                                 <span class="menu-item text-truncate" data-i18n="PO Generation">Delivery Challan Details</span>
                             </a>
@@ -299,9 +299,9 @@
                             </a>
                         </li>
                         <li class="{{ Request::is('sales-return-details') ? 'active' : ''}}">
-                            <a class="d-flex align-items-center" href="#">
+                            <a class="d-flex align-items-center" href="{{route('sales-return-details')}}">
                                 <i class="bx bx-right-arrow-alt"></i>
-                                <span class="menu-item text-truncate" data-i18n="PO Generation">Sales Return Details</span>
+                                <span class="menu-item text-truncate" data-i18n="sales-return-details">Sales Return Details</span>
                             </a>
                         </li>
                         <li class="nav-item {{ Request::is('estimate-list*')  ? 'active' : ''}}">
@@ -436,11 +436,17 @@
                                 <span class="menu-item text-truncate" data-i18n="Expenses by Project">Expenses by Project</span>
                             </a>
                         </li>
+                        <li class="{{ Request::is('expenses-by-employee*') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('expenses-by-employee')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="Expense by Employee">Expense by Employee</span>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 {{-- Purchase and Expenses --}}
 
-                {{-- Purchase and Expenses --}}
+                {{-- Inventory Reports --}}
                 <li class=" nav-item"><a href="#"><i class="bx bx-user-plus"></i><span class="menu-title text-truncate" data-i18n="Inventory Reports">Inventory Reports</span></a>
                     <ul class="menu-content">
                         <li class="{{ Request::is('inventory-valuation-summary') ? 'active' : ''}}">
@@ -494,7 +500,40 @@
                         
                     </ul>
                 </li>
-                {{-- Purchase and Expenses --}}
+                {{-- Inventory Reports --}}
+
+                {{-- Sales Report --}}
+                <li class=" nav-item"><a href="#"><i class="bx bx-user-plus"></i><span class="menu-title text-truncate" data-i18n="Inventory Reports">Sales Reports</span></a>
+                    <ul class="menu-content">
+                        <li class="{{ Request::is('sales-report-by-customer') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('sales-report-by-customer')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="sales-report-by-customer">Sales by Customer</span>
+                            </a>
+                        </li> 
+                        <li class="{{ Request::is('sales-by-item') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('sales-by-item')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="sales-by-item">Sales by Item</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('sales-by-item') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('sales-by-item')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="sales-by-item">Sales by Person</span>
+                            </a>
+                        </li> 
+
+                        <li class="{{ Request::is('sales-report-by-region') ? 'active' : ''}}">
+                            <a class="d-flex align-items-center" href="{{route('sales-report-by-region')}}">
+                                <i class="bx bx-right-arrow-alt"></i>
+                                <span class="menu-item text-truncate" data-i18n="sales-by-item">Sales by Region</span>
+                            </a>
+                        </li>                        
+                        
+                    </ul>
+                </li>
+                {{-- Inventory Reports --}}
                 
             @endif
             {{-- end of Report --}}

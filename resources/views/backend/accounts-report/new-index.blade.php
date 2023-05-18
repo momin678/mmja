@@ -167,7 +167,7 @@
                                 </div>
                                 <div class="card-body pt-0 pb-0">
                                     <table class="table table-sm">
-                                        @foreach (App\JournalRecord::distinct()->get('account_head_id') as $unique_acc_head)
+                                        @foreach (App\JournalRecord::where('journal_id', '!=',0)->distinct()->get('account_head_id') as $unique_acc_head)
                                         <tr>
                                             <th>{{ $unique_acc_head->ac_head->fld_ac_code}}</th>
                                             <th>{{ $unique_acc_head->ac_head->fld_ac_head}}</th>
@@ -186,7 +186,7 @@
                                                 $each_ledger_dr=0;
                                                 $each_ledger_cr=0;
                                             @endphp
-                                            @foreach (App\JournalRecord::where('account_head_id', $unique_acc_head->account_head_id )->get() as $record)
+                                            @foreach (App\JournalRecord::where('account_head_id', $unique_acc_head->account_head_id )->where('journal_id', '!=',0)->get() as $record)
 
                                                 @php
                                                     $reverse= $record->transaction_type== "DR" ? "CR" : "DR";
