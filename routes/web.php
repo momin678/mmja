@@ -651,5 +651,14 @@ Route::get('const-raw-meterial-edit/{id}','backend\ItemListController@constructi
 Route::POST('const-raw-meterial-update/{id}','backend\ItemListController@construction_raw_material_update')->name('const-raw-meterial-update');
 
 Route::get('const-raw-purchase','backend\ConstructionPurchaseController@index')->name('const-raw-purchase');
-
+Route::post('const-raw-purchase-store','backend\ConstructionPurchaseController@store')->name('const-raw-purchase-store');
+Route::post('const-raw-po-item-store', 'backend\ConstructionPurchaseController@const_raw_po_item_store')->name('const-raw-po-item-store');
+Route::get('const-raw-purchase-show/{id}','backend\ConstructionPurchaseController@const_raw_purchase_show')->name('const-raw-purchase-show');
+Route::post("const-raw-purchase-item-delete", "backend\ConstructionPurchaseController@const_po_item_delete")->name("const-raw-purchase-item-delete");
+Route::get('const-raw-purchase-print/{id}', 'backend\ConstructionPurchaseController@const_raw_purchase_print')->name('const-raw-purchase-print');
+Route::get('const-raw-purchase-edit/{id}', 'backend\ConstructionPurchaseController@const_raw_purchase_edit')->name('const-raw-purchase-edit');
+Route::get("const-raw-purchase-process/{id}", "backend\ConstructionPurchaseController@const_raw_purchase_process")->name("const-raw-purchase-process");
+Route::post('const-raw-purchase-update/{id}', 'backend\ConstructionPurchaseController@update')->name('const-raw-purchase-update');
+Route::post('const-raw-purchase-item-edit', 'backend\ConstructionPurchaseController@const_raw_purchase_item_edit')->name('const-raw-purchase-item-edit');
+Route::post("const-raw-purchase-po-filter", "backend\ConstructionPurchaseController@po_filter")->name("const-raw-purchase-po-filter");
 });
