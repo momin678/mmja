@@ -115,7 +115,7 @@
                                         <td>{{$item->vatRate->name}}</td>
                                         <td>{{$item->purchase_rate}}</td>
                                         <td>{{$item->quantity}}</td>
-                                        <td class="text-right">{{number_format((float)$item->total_amount, 2, '.', '') }}</td>
+                                        <td class="text-right">{{number_format((float)$item->purchase_rate*$item->quantity, 2, '.', '') }}</td>
                                     </tr>
                                     @endforeach
                                     <tr class="border-top">
@@ -136,13 +136,13 @@
                                     <tr>
                                         <td colspan="4" class="text-right">VAT:</td>
                                         <td colspan="2" class="text-right">
-                                            {{ number_format((float)$purchase_items->sum('vat_amount'), 2, '.', '')}}
+                                            {{ number_format((float)$purchase_info->vat, 2, '.', '')}}
                                         </td>
                                     </tr>
                                     <tr>
                                         <td colspan="4" class="text-right">Net Amount (AED):</td>
                                         <td colspan="2" class="text-right">
-                                            {{ number_format((float)$purchase_items->sum('total_amount')-$purchase_info->discount_amount, 2, '.', '')}}
+                                            {{ number_format((float)$purchase_info->grand_total, 2, '.', '')}}
                                         </td>
                                     </tr>
                                 </tbody>

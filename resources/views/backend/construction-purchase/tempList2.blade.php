@@ -4,7 +4,7 @@
     <td>{{$item->vatRate->name}}</td>
     <td>{{$item->purchase_rate}}</td>
     <td>{{$item->quantity}}</td>
-    <td>{{number_format((float)$item->total_amount, 2, '.', '') }}</td>
+    <td>{{number_format((float)$item->purchase_rate*$item->quantity, 2, '.', '') }}</td>
     <td>
         <button class="btn btn-warning sm-btn row-edit" value="{{$item->id}}" id="{{$item->id}}"> <i class="bx bx-edit"></i> </button>
         <button class="btn btn-danger sm-btn row-delete" value="{{$item->id}}"> <i class="bx bx-trash"></i> </button>

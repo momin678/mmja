@@ -84,7 +84,6 @@ class ConstructionPurchaseController extends Controller
     }
     public function store(Request $request)
     {
-        dd($request);
         $request->validate([
             'supplier_id' => 'required',
             'tax_invoice_no' => 'required',
@@ -125,20 +124,35 @@ class ConstructionPurchaseController extends Controller
             $purchase_temp->pay_date = $request->pay_date;
             $purchase_temp->shipping_id = $request->shipping_id;
             $purchase_temp->date = $request->date;
-            $purchase_temp->subtotal = $purchase_items_temp->sum('total_amount')-$purchase_items_temp->sum('vat_amount');
-            $purchase_temp->vat = $purchase_items_temp->sum('vat_amount');
-            $purchase_temp->grand_total = $purchase_items_temp->sum('total_amount');
-            $purchase_temp->discount_type = $request->discount_type;
-            $purchase_temp->discount_value = $request->discount_amount;
+
+            $discount_amount = 0;
             if($request->discount_type && $request->discount_amount){
                 if($request->discount_type == 'Percentage'){
                     $discount_amount = (($purchase_items_temp->sum('total_amount')-$purchase_items_temp->sum('vat_amount'))*$request->discount_amount)/100;
                     $purchase_temp->discount_amount = $discount_amount;
                 }elseif($request->discount_type == 'Fixed'){
+                    $discount_amount = $request->discount_amount;
                     $purchase_temp->discount_amount = $request->discount_amount;
                 }else{
-                    $purchase_temp->discount_amount =0;
+                    $purchase_temp->discount_amount = 0;
                 }
+            }
+            $total_amount = $purchase_items_temp->sum('total_amount')-$purchase_items_temp->sum('vat_amount');
+            $net_total = $total_amount-$discount_amount;
+            $vat_amount = ($net_total*5)/100;
+            $grand_total = $net_total+$vat_amount;
+
+            $purchase_temp->subtotal = $total_amount;
+            $purchase_temp->vat = $vat_amount;
+            $purchase_temp->grand_total = $grand_total;
+            $purchase_temp->discount_type = $request->discount_type;
+            $purchase_temp->discount_value = $discount_amount;
+            if($request->pay_mode == "Cash" || $request->pay_mode == "Card"){
+                $purchase_temp->paid_amount = $grand_total;
+                $purchase_temp->due_amount = 0.00;
+            }else{
+                $purchase_temp->paid_amount = 0.00;
+                $purchase_temp->due_amount = $grand_total;
             }
             $purchase_temp->status = 10;
             $purchase_temp->save();
@@ -234,20 +248,33 @@ class ConstructionPurchaseController extends Controller
         $purchase_temp->pay_date = $request->pay_date;
         $purchase_temp->shipping_id = $request->shipping_id;
         $purchase_temp->date = $request->date;
-        $purchase_temp->subtotal = $purchase_items_temp->sum('total_amount')-$purchase_items_temp->sum('vat_amount');
-        $purchase_temp->vat = $purchase_items_temp->sum('vat_amount');
-        $purchase_temp->grand_total = $purchase_items_temp->sum('total_amount');
-        $purchase_temp->discount_type = $request->discount_type;
-        $purchase_temp->discount_value = $request->discount_amount;
+
+        $discount_amount = 0;
         if($request->discount_type && $request->discount_amount){
             if($request->discount_type == 'Percentage'){
                 $discount_amount = (($purchase_items_temp->sum('total_amount')-$purchase_items_temp->sum('vat_amount'))*$request->discount_amount)/100;
                 $purchase_temp->discount_amount = $discount_amount;
             }elseif($request->discount_type == 'Fixed'){
+                $discount_amount = $request->discount_amount;
                 $purchase_temp->discount_amount = $request->discount_amount;
             }else{
-                $purchase_temp->discount_amount =0;
+                $purchase_temp->discount_amount = 0;
             }
+        }
+        $total_amount = $purchase_items_temp->sum('total_amount')-$purchase_items_temp->sum('vat_amount');
+        $net_total = $total_amount-$discount_amount;
+        $vat_amount = ($net_total*5)/100;
+        $grand_total = $net_total+$vat_amount;
+
+        $purchase_temp->subtotal = $total_amount;
+        $purchase_temp->vat = $vat_amount;
+        $purchase_temp->grand_total = $grand_total;
+        if($request->pay_mode == "Cash" || $request->pay_mode == "Card"){
+            $purchase_temp->paid_amount = $grand_total;
+            $purchase_temp->due_amount = 0.00;
+        }else{
+            $purchase_temp->paid_amount = 0.00;
+            $purchase_temp->due_amount = $grand_total;
         }
         $purchase_temp->status = 10;
         $purchase_temp->save();
